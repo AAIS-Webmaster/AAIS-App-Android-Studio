@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="navigationTheme">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorControlHighlight">@color/gray</item>
+    </style>
+
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
+    </style>
+
+    <style name="CustomSpinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/spinner_bg</item>
+        <item name="android:popupBackground">@color/card_background</item>
+    </style>
+</resources>

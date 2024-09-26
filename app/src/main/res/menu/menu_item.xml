@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_session"
+            android:title="Sessions"/>
+        <item
+            android:id="@+id/nav_chat"
+            android:title="Chat"/>
+    </group>
+
+    <item android:title="General"
+        android:id="@+id/general">
+        <menu android:id="@+id/menu_general">
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_qr_sign_in"
+                    android:title="QR Sign-In"/>
+                <item
+                    android:id="@+id/nav_site_map"
+                    android:title="Site Map"/>
+                <item
+                    android:id="@+id/nav_org"
+                    android:title="Organising Committee"/>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="System"
+        android:id="@+id/system">
+        <menu android:id="@+id/menu_system">
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_about"
+                    android:title="About"/>
+                <item
+                    android:id="@+id/nav_signout"
+                    android:title="Sign Out"/>
+            </group>
+        </menu>
+    </item>
+</menu>

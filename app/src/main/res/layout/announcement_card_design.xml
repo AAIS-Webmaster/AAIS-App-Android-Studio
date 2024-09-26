@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="5dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:orientation="vertical"
+        app:cardCornerRadius="20dp"
+        android:background="@color/bg">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/announcement_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:fontFamily="sans-serif-condensed"
+                android:text="Subject"
+                android:textColor="@color/text"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/delete_announcement"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/baseline_delete_outline_24"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="12sp"
+                android:textColor="@color/text"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/announcement_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="15sp"
+            android:textColor="@color/text"/>
+
+        <TextView
+            android:id="@+id/announcement_date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:text="Date and Time"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="12sp"
+            android:textColor="@color/text"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
