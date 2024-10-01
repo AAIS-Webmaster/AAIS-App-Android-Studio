@@ -176,57 +176,56 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!eventExists){
-                    Intent intent = new Intent(Intent.ACTION_INSERT);
-                    intent.setData(CalendarContract.CONTENT_URI);
-                    intent.putExtra(CalendarContract.Events.TITLE, title);
-                    intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event_location);
-                    if (paper2_isPresent && paper3_isPresent && paper4_isPresent){
-                        intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
-                                + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
-                                + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name + "\n 3. "
-                                + paper3_name + "\n 4. " + paper4_name);
-                    }
-
-                    else if (paper2_isPresent && paper3_isPresent){
-                        intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
-                                + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
-                                + "Paper Details:\n 1. " + paper1_name + "\n 2. "
-                                + paper2_name + "\n 3. " + paper3_name);
-                    }
-
-                    else if (paper2_isPresent){
-                        intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
-                                + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
-                                + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name);
-                    }
-
-                    else {
-                        intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
-                                + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
-                                + "Paper Details:\n 1. " + paper1_name);
-                    }
+                // Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
+                if (ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                    // If not, request the permissions
+                    ActivityCompat.requestPermissions(Event_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
+                } else {
+                    if (!eventExists) {
+                        Intent intent = new Intent(Intent.ACTION_INSERT);
+//                        intent.setPackage("com.google.android.calendar");
+                        intent.setData(CalendarContract.Events.CONTENT_URI);
+                        intent.putExtra(CalendarContract.Events.TITLE, title);
+                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event_location);
+                        if (paper2_isPresent && paper3_isPresent && paper4_isPresent) {
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name + "\n 3. "
+                                    + paper3_name + "\n 4. " + paper4_name);
+                        } else if (paper2_isPresent && paper3_isPresent) {
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Paper Details:\n 1. " + paper1_name + "\n 2. "
+                                    + paper2_name + "\n 3. " + paper3_name);
+                        } else if (paper2_isPresent) {
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name);
+                        } else {
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Paper Details:\n 1. " + paper1_name);
+                        }
 
 //                    intent.putExtra(CalendarContract.Events.ALL_DAY, "true");
-                    intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start_time);
-                    intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end_time);
+                        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start_time);
+                        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end_time);
 //                    intent.putExtra(Intent.EXTRA_EMAIL, "test@gmail.com, test2@gmial.com");
 
-                    if(intent.resolveActivity(getPackageManager()) != null){
-                        startActivity(intent);
-                        eventExists = isEventInCalendar(title, start_time, end_time);
-                        if (eventExists) {
-                            favorite.setImageResource(R.drawable.baseline_favorite_24);
-                            Toast.makeText(Event_Page.this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                            eventExists = isEventInCalendar(title, start_time, end_time);
+                            if (eventExists) {
+                                favorite.setImageResource(R.drawable.baseline_favorite_24);
+                                Toast.makeText(Event_Page.this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(Event_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        removeEventFromCalendar();
                     }
-                    else {
-                        Toast.makeText(Event_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                else {
-                    removeEventFromCalendar();
                 }
             }
         });
@@ -243,7 +242,6 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         if (extra != null){
             name = extra.getString("event_name");
             String finalName = name;
-            Toast.makeText(this, finalName, Toast.LENGTH_SHORT).show();
             dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
                 @Override
                 public void onEventsRetrieved(List<Event> events) {
@@ -340,6 +338,14 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                                     // Start the first check
                                     handler.post(checkEventRunnable);
                                 }
+
+                                if (ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.WRITE_CALENDAR)
+                                        != PackageManager.PERMISSION_GRANTED) {
+                                    // Request the permission
+                                    ActivityCompat.requestPermissions(Event_Page.this,
+                                            new String[]{Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
+                                }
+
                             }
                         }
 
@@ -462,7 +468,6 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                     "\nSession Chair: " + text_chair +
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name +
                     "\n\t\t3. " + paper3_name + "\n\t\t4. " + paper4_name);
-
         }
         else if (paper1_name != null && paper2_name != null &&
                 paper3_name != null){
@@ -638,7 +643,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Event_Page.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Event_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

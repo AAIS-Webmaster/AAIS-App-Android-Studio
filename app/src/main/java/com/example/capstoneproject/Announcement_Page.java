@@ -202,7 +202,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Announcement_Page.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Announcement_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

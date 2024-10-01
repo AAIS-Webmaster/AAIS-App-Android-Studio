@@ -255,7 +255,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Group_Chat_Page.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Group_Chat_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

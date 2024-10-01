@@ -41,6 +41,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -121,6 +122,30 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             }
         }
 
+        userIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
+                    startActivity(intent);
+                } catch (Exception e){
+                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        user_icon_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
+                    startActivity(intent);
+                } catch (Exception e){
+                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        
         track.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,12 +195,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             }
         });
 
-        announcementRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setOnClickListener();
-            }
-        });
+//        announcementRecycler.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setOnClickListener();
+//            }
+//        });
 
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,13 +230,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         announcementRecycler.setHasFixedSize(true);
         announcementRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        ArrayList<HomeAnnouncementHelperClass> announcementLocations = new ArrayList<>();
-        pos = new ArrayList<>();
+
+//        pos = new ArrayList<>();
 
         dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
             @Override
             public void onEventsRetrieved(List<Event> events) {
                 if (events != null && !events.isEmpty()) {
+                    ArrayList<HomeAnnouncementHelperClass> announcementLocations = new ArrayList<>();
                     // Sort events by date, then by start time, and finally by end time
                     Collections.sort(events, new Comparator<Event>() {
                         @Override
@@ -233,6 +259,10 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                         }
                     });
 
+                    // Get current date and time for comparison
+                    LocalDate currentDate = LocalDate.now();
+                    LocalTime currentTime = LocalTime.now();
+
                     // Limit the number of events to 4
                     int eventCount = 0;
 
@@ -240,20 +270,28 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                     for (Event event : events) {
                         if (eventCount >= 4) break; // Stop adding after 4 events
 
-                        String eventName = event.getName();
-                        LocalDate date = event.getDate();
-                        String eventTime = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
+                        LocalDate eventDate = event.getDate();
+                        LocalTime eventEndTime = event.getEnd_time();
 
-                        // Example condition for filtering events (adjust as needed)
-                        if (date.toString().equals("2024-01-")) {
-                            pos.add(eventName);
+                        // Skip events that are in the past
+                        if (eventDate.isBefore(currentDate)) {
+                            continue; // Skip if the event date is before today
                         }
 
+                        // If the event is today, check if it has already ended
+                        if (eventDate.isEqual(currentDate) && eventEndTime.isBefore(currentTime)) {
+                            continue; // Skip if the event has already ended today
+                        }
+
+                        // Now it's a valid future or ongoing event, so add it
+                        String eventName = event.getName();
+                        String eventTime = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
+
                         announcementLocations.add(new HomeAnnouncementHelperClass(
-                                event.getName(),
+                                eventName,
                                 "Date: " + event.getDate().toString(),
-                                "Duration: " + event.getStart_time().toString() + " - " + event.getEnd_time().toString())
-                        );
+                                "Duration: " + eventTime
+                        ));
 
                         eventCount++;
                     }
@@ -273,53 +311,21 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 Toast.makeText(Home.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-//        pos.add("Event1");
-//        pos.add("Event2");
-//        pos.add("Event3");
-//        announcementLocations.add(new HomeAnnouncementHelperClass("Information Technology Conference", "4:00 - 6:00"));
-//        announcementLocations.add(new HomeAnnouncementHelperClass("Health Conference", "5:00 - 7:00"));
-//        announcementLocations.add(new HomeAnnouncementHelperClass("Research Conference", "6:00 - 8:00"));
-//        adapter3 = new HomeAnnouncementAdapter(announcementLocations, listener);
-//        announcementRecycler.setAdapter(adapter3);
-
-//        if (dbHelper != null) {
-//            dbHelper.getData("guptasdhuruv4@gmail.com", "Announcement", new MyDatabaseHelper.DataRetrievalCallback() {
-//                @Override
-//                public void onDataRetrieved(Map<String, String> retrievedData) {
-//                    if (retrievedData != null) {
-//                        for (Map.Entry<String, String> entry : retrievedData.entrySet()) {
-//                            announcementLocations.add(new HomeAnnouncementHelperClass(entry.getKey(), entry.getValue()));
-//                            adapter3 = new HomeAnnouncementAdapter(announcementLocations);
-//                            announcementRecycler.setAdapter(adapter3);
-//                        }
-//                    } else {
-//                        System.out.println("No data found for this category.");
-//                    }
-//                }
+//    private void setOnClickListener() {
+//        listener = new GeneralAdapter.RecyclerViewClickListener() {
+//            @Override
+//            public void onClick(View v, int position) {
+////                listener.onClick(v, position);
 //
-//                @Override
-//                public void onError(Exception e) {
-//                    e.printStackTrace();
-//                    Toast.makeText(Home.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-    }
-
-    private void setOnClickListener() {
-        listener = new GeneralAdapter.RecyclerViewClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-//                listener.onClick(v, position);
-
-                Intent intent = new Intent(Home.this, Event_Page.class);
-                intent.putExtra("event_name", pos.get(position));
-//                intent.putExtra("time", time);
-                startActivity(intent);
-            }
-        };
-    }
+//                Intent intent = new Intent(Home.this, Event_Page.class);
+//                intent.putExtra("event_name", pos.get(position));
+////                intent.putExtra("time", time);
+//                startActivity(intent);
+//            }
+//        };
+//    }
 
     private void generalRecycler() {
         generalRecycler.setHasFixedSize(true);
@@ -502,7 +508,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Home.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Home.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

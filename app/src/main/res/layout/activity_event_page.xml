@@ -83,7 +83,7 @@
             <!-- Event Name TextView aligned to the left -->
             <TextView
                 android:id="@+id/event_name"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:layout_marginStart="10dp"

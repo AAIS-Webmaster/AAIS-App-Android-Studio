@@ -169,7 +169,7 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(About_Page.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(About_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

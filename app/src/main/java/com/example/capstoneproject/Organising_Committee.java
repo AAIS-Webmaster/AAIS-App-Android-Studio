@@ -236,6 +236,7 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
         //Navigation Drawer
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_org);
 
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,7 +275,7 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Organising_Committee.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Organising_Committee.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){

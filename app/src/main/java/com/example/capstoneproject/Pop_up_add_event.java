@@ -24,7 +24,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -374,7 +373,24 @@ public class Pop_up_add_event extends AppCompatActivity {
         });
 
         initDatePicker();
-        addDate.setText(date());
+
+        Bundle extra = getIntent().getExtras();
+
+        if (extra != null) {
+            int selected_day = extra.getInt("date");
+            int selected_month = extra.getInt("month");
+            int selected_year = extra.getInt("year");
+
+            // Ensure day and month are formatted with two digits
+            String date = String.format("%d-%02d-%02d", selected_year, selected_month, selected_day);
+
+            // Parse the date
+            DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(date, formatterDate);
+
+            // Set the date to the TextView
+            addDate.setText(localDate.toString());
+        }
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.spinner_items, R.layout.spinner_item);
@@ -463,14 +479,14 @@ public class Pop_up_add_event extends AppCompatActivity {
         });
     }
 
-    private String date() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        month = month + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        return makeDateString(day, month, year);
-    }
+//    private String date() {
+//        Calendar cal = Calendar.getInstance();
+//        int year = cal.get(Calendar.YEAR);
+//        int month = cal.get(Calendar.MONTH);
+//        month = month + 1;
+//        int day = cal.get(Calendar.DAY_OF_MONTH);
+//        return makeDateString(day, month, year);
+//    }
 
     private void initDatePicker()
     {
@@ -486,17 +502,33 @@ public class Pop_up_add_event extends AppCompatActivity {
                 String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 // Set the formatted date in the TextView
                 addDate.setText(formattedDate);
+                addDate.setTextColor(getResources().getColor(R.color.text));
             }
         };
 
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
+//        Calendar cal = Calendar.getInstance();
 
-        int style = AlertDialog.THEME_HOLO_LIGHT;
+        Bundle extra = getIntent().getExtras();
 
-        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
+        if (extra != null) {
+            int day = extra.getInt("date");
+            int month = extra.getInt("month");
+            int year = extra.getInt("year");
+
+            int style = AlertDialog.THEME_HOLO_LIGHT;
+
+            datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month - 1, day);
+        }
+
+//        else {
+//            int year = cal.get(Calendar.YEAR);
+//            int month = cal.get(Calendar.MONTH);
+//            int day = cal.get(Calendar.DAY_OF_MONTH);
+//
+//            int style = AlertDialog.THEME_HOLO_LIGHT;
+//
+//            datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
+//        }
     }
 
     private String makeDateString(int day, int month, int year)

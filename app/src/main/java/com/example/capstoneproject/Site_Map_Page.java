@@ -74,7 +74,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.VISIBLE);
+                            unseen.setVisibility(View.GONE);
                         }
                     } else {
                         unseen.setVisibility(View.VISIBLE);
@@ -172,7 +172,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Site_Map_Page.this, HomePage.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Site_Map_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Organising Committee")){

@@ -94,7 +94,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         gsc = GoogleSignIn.getClient(this,gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if (acct!=null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
 
@@ -158,7 +158,13 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         AddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomePage.this, Pop_up_add_event.class));
+                Intent intent = new Intent(HomePage.this, Pop_up_add_event.class);
+                intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth()));
+                intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue()));
+                intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear()));
+                startActivity(intent);
+
+//                startActivity(new Intent(HomePage.this, Pop_up_add_event.class));
             }
         });
 
@@ -305,7 +311,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         if(item.toString().equals("Home")){
             startActivity(new Intent(HomePage.this, Home.class));
         }
-        if(item.toString().equals("QR Sign-In")){
+        if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(HomePage.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){
@@ -376,6 +382,8 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
             @Override
             public void onEventsRetrieved(List<Event> events) {
+                ArrayList<GeneralHelperClass> generalLocations = new ArrayList<>();
+                event_present = false;
                 if (events != null && !events.isEmpty()) {
                     // Sort and display events
                     Collections.sort(events, new Comparator<Event>() {
@@ -396,14 +404,15 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                     }
 
                     if (event_present) {
-                        adapter = new GeneralAdapter(generalLocations, listener);
-                        generalRecycler.setAdapter(adapter);
+//                        adapter = new GeneralAdapter(generalLocations, listener);
+//                        generalRecycler.setAdapter(adapter);
                         error.setVisibility(View.GONE);
                     } else {
                         error.setVisibility(View.VISIBLE);
-                        adapter = new GeneralAdapter(generalLocations, listener);
-                        generalRecycler.setAdapter(adapter);
                     }
+
+                    adapter = new GeneralAdapter(generalLocations, listener);
+                    generalRecycler.setAdapter(adapter);
 
                 } else {
                     Toast.makeText(HomePage.this, "No events found.", Toast.LENGTH_SHORT).show();

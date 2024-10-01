@@ -21,7 +21,7 @@
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_qr_sign_in"
-                    android:title="QR Sign-In"/>
+                    android:title="QR Check-In"/>
                 <item
                     android:id="@+id/nav_site_map"
                     android:title="Site Map"/>

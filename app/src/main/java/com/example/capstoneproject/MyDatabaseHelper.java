@@ -15,6 +15,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,14 +215,51 @@ public class MyDatabaseHelper {
                         String paper4_name = eventSnapshot.child("paper4_name").getValue(String.class);
                         String paper4_url = eventSnapshot.child("paper4_url").getValue(String.class);
 
-                        // Convert to LocalDate and LocalTime
-                        LocalDate date = LocalDate.parse(dateStr);
-                        LocalTime start_time = LocalTime.parse(startTime);
-                        LocalTime end_time = LocalTime.parse(endTime);
+                        // Initialize LocalDate and LocalTime variables
+                        LocalDate date = null;
+                        LocalTime start_time = null;
+                        LocalTime end_time = null;
 
-                        // Create Event object and add to list
-                        Event event = new Event(name, date, start_time, end_time, location, address, description, paper1_name, paper1_url, paper2_name, paper2_url, paper3_name, paper3_url, paper4_name, paper4_url);
-                        events.add(event);
+                        // Convert dateStr to LocalDate, but handle null or invalid format
+                        if (dateStr != null && !dateStr.isEmpty()) {
+                            try {
+                                date = LocalDate.parse(dateStr);
+                            } catch (DateTimeParseException e) {
+                                // Handle parsing error, log, or skip the event
+                                e.printStackTrace();
+                                continue; // Skip this event if the date format is invalid
+                            }
+                        }
+
+                        // Convert startTime to LocalTime, but handle null or invalid format
+                        if (startTime != null && !startTime.isEmpty()) {
+                            try {
+                                start_time = LocalTime.parse(startTime);
+                            } catch (DateTimeParseException e) {
+                                // Handle parsing error, log, or skip the event
+                                e.printStackTrace();
+                                continue; // Skip this event if the start time format is invalid
+                            }
+                        }
+
+                        // Convert endTime to LocalTime, but handle null or invalid format
+                        if (endTime != null && !endTime.isEmpty()) {
+                            try {
+                                end_time = LocalTime.parse(endTime);
+                            } catch (DateTimeParseException e) {
+                                // Handle parsing error, log, or skip the event
+                                e.printStackTrace();
+                                continue; // Skip this event if the end time format is invalid
+                            }
+                        }
+
+                        // Ensure all required fields are present before creating an Event object
+                        if (date != null && start_time != null && end_time != null) {
+                            // Create Event object and add to list
+                            Event event = new Event(name, date, start_time, end_time, location, address, description,
+                                    paper1_name, paper1_url, paper2_name, paper2_url, paper3_name, paper3_url, paper4_name, paper4_url);
+                            events.add(event);
+                        }
                     }
                     callback.onEventsRetrieved(events); // Pass events to callback
                 } else {

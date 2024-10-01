@@ -63,27 +63,35 @@ public class FirstAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             // Call the method to get user image URL
             if (item.getName() != null) {
-                dbHelper.getUserImageUrl(item.getEmail(), new MyDatabaseHelper.ImageUrlCallback() {
-                    @Override
-                    public void onImageUrlRetrieved(String imageUrl) {
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            // Load image using Glide or any image loading library
-                            Picasso.get().load(imageUrl).into(messageViewHolder.imageView);
-                            messageViewHolder.card_view.setVisibility(View.GONE);
-                        } else {
-                            // Set default image or the name initial if no URL is found
-//                            messageViewHolder.imageView.setImageDrawable(null); // Clear previous image
+                try {
+                    dbHelper.getUserImageUrl(item.getEmail(), new MyDatabaseHelper.ImageUrlCallback() {
+                        @Override
+                        public void onImageUrlRetrieved(String imageUrl) {
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                // Load image using Glide or any image loading library
+                                Picasso.get().load(imageUrl).into(messageViewHolder.imageView);
+                                messageViewHolder.imageView.setVisibility(View.VISIBLE);
+                                messageViewHolder.card_view.setVisibility(View.GONE);
+                            } else {
+                                // Set default image or the name initial if no URL is found
+    //                            messageViewHolder.imageView.setImageDrawable(null); // Clear previous image
+                                messageViewHolder.card_view.setText(nameInitial); // Show the initial
+                                messageViewHolder.card_view.setVisibility(View.VISIBLE);
+                                messageViewHolder.imageView.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
                             messageViewHolder.card_view.setText(nameInitial); // Show the initial
                             messageViewHolder.imageView.setVisibility(View.GONE);
                         }
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        messageViewHolder.card_view.setText(nameInitial); // Show the initial
-                        messageViewHolder.imageView.setVisibility(View.GONE);
-                    }
-                });
+                    });
+                }
+                catch (Exception e){
+                    messageViewHolder.card_view.setText(nameInitial); // Show the initial
+                    messageViewHolder.imageView.setVisibility(View.GONE);
+                }
             } else {
                 // Show the initial if name is not provided
                 messageViewHolder.imageView.setImageDrawable(null); // Clear previous image
