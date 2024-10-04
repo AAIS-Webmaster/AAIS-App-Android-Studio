@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class HomePage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CalendarAdapter.OnItemListener {
+public class Session_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CalendarAdapter.OnItemListener {
 
     TextView user;
     static final float END_SCALE = 0.7f;
@@ -131,14 +131,14 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomePage.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Page.this, Announcement_Page.class));
             }
         });
 
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomePage.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Page.this, Announcement_Page.class));
             }
         });
 
@@ -165,7 +165,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         AddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, Pop_up_add_event.class);
+                Intent intent = new Intent(Session_Page.this, Pop_up_add_event.class);
                 intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth()));
                 intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue()));
                 intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear()));
@@ -221,14 +221,14 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                     }
 
                 } else {
-                    Toast.makeText(HomePage.this, "No events found.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(HomePage.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Session_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         pos.add("Event1");
@@ -317,29 +317,29 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(HomePage.this, Home.class));
+            startActivity(new Intent(Session_Page.this, Home_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
-            startActivity(new Intent(HomePage.this, QR_check_in.class));
+            startActivity(new Intent(Session_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){
-            startActivity(new Intent(HomePage.this, Site_Map_Page.class));
+            startActivity(new Intent(Session_Page.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(HomePage.this, Organising_Committee.class));
+            startActivity(new Intent(Session_Page.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
-            startActivity(new Intent(HomePage.this, Group_Chat_Page.class));
+            startActivity(new Intent(Session_Page.this, Group_Chat_Page.class));
         }
         if(item.toString().equals("About")){
-            startActivity(new Intent(HomePage.this, About_Page.class));
+            startActivity(new Intent(Session_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(HomePage.this, Google_Sign_In_Page.class));
+                    startActivity(new Intent(Session_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }
@@ -421,14 +421,14 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                     generalRecycler.setAdapter(adapter);
 
                 } else {
-                    Toast.makeText(HomePage.this, "No events found.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(HomePage.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Session_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

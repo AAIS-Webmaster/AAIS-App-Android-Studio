@@ -292,16 +292,16 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(QR_check_in.this, Home.class));
+            startActivity(new Intent(QR_check_in.this, Home_Page.class));
         }
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(QR_check_in.this, HomePage.class));
+            startActivity(new Intent(QR_check_in.this, Session_Page.class));
         }
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(QR_check_in.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(QR_check_in.this, Organising_Committee.class));
+            startActivity(new Intent(QR_check_in.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
             startActivity(new Intent(QR_check_in.this, Group_Chat_Page.class));

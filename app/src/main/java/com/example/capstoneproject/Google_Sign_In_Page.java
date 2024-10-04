@@ -24,7 +24,7 @@ public class Google_Sign_In_Page extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.google_sign_in_page);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -65,7 +65,7 @@ public class Google_Sign_In_Page extends AppCompatActivity {
 
     void navigateToSecondActivity(){
         finish();
-        Intent intent = new Intent(Google_Sign_In_Page.this, Home.class);
+        Intent intent = new Intent(Google_Sign_In_Page.this, Home_Page.class);
         startActivity(intent);
     }
 }

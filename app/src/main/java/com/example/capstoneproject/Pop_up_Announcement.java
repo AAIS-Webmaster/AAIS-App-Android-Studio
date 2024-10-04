@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pop_up extends AppCompatActivity {
+public class Pop_up_Announcement extends AppCompatActivity {
     EditText title, description;
     TextView error;
     Button post, cancel;
@@ -64,7 +64,7 @@ public class Pop_up extends AppCompatActivity {
 //                    Intent intent = new Intent(Pop_up.this, Announcement_Page.class);
 //                    intent.putExtra("key1", title.getText().toString());
 //                    intent.putExtra("key2", description.getText().toString());
-                    startActivity(new Intent(Pop_up.this, Announcement_Page.class));
+                    startActivity(new Intent(Pop_up_Announcement.this, Announcement_Page.class));
                 }
                 else if (title.getText().toString().equals("") && description.getText().toString().equals("")) {
                     error.setText("Input Required: The Subject and Description Tags are empty.");
@@ -82,7 +82,7 @@ public class Pop_up extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Pop_up.this, Announcement_Page.class));
+                startActivity(new Intent(Pop_up_Announcement.this, Announcement_Page.class));
             }
         });
     }

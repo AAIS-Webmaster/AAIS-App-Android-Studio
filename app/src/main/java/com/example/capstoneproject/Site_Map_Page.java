@@ -174,16 +174,16 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(Site_Map_Page.this, Home.class));
+            startActivity(new Intent(Site_Map_Page.this, Home_Page.class));
         }
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Site_Map_Page.this, HomePage.class));
+            startActivity(new Intent(Site_Map_Page.this, Session_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Site_Map_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(Site_Map_Page.this, Organising_Committee.class));
+            startActivity(new Intent(Site_Map_Page.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
             startActivity(new Intent(Site_Map_Page.this, Group_Chat_Page.class));

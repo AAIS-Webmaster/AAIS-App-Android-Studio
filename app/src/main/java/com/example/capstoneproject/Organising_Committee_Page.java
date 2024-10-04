@@ -1,6 +1,6 @@
 package com.example.capstoneproject;
 
-import static com.example.capstoneproject.Home.END_SCALE;
+import static com.example.capstoneproject.Home_Page.END_SCALE;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Organising_Committee extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class Organising_Committee_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     String personName, personEmail;
     ImageView[] imageViews;
@@ -143,14 +143,14 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Organising_Committee.this, Announcement_Page.class));
+                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class));
             }
         });
 
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Organising_Committee.this, Announcement_Page.class));
+                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class));
             }
         });
     }
@@ -222,7 +222,7 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkHref));
                             startActivity(intent);
                         } catch (Exception e){
-                            Toast.makeText(Organising_Committee.this, "Unable to Open the URL", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Organising_Committee_Page.this, "Unable to Open the URL", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -277,29 +277,29 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(Organising_Committee.this, Home.class));
+            startActivity(new Intent(Organising_Committee_Page.this, Home_Page.class));
         }
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Organising_Committee.this, HomePage.class));
+            startActivity(new Intent(Organising_Committee_Page.this, Session_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
-            startActivity(new Intent(Organising_Committee.this, QR_check_in.class));
+            startActivity(new Intent(Organising_Committee_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){
-            startActivity(new Intent(Organising_Committee.this, Site_Map_Page.class));
+            startActivity(new Intent(Organising_Committee_Page.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Chat")){
-            startActivity(new Intent(Organising_Committee.this, Group_Chat_Page.class));
+            startActivity(new Intent(Organising_Committee_Page.this, Group_Chat_Page.class));
         }
         if(item.toString().equals("About")){
-            startActivity(new Intent(Organising_Committee.this, About_Page.class));
+            startActivity(new Intent(Organising_Committee_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Organising_Committee.this, Google_Sign_In_Page.class));
+                    startActivity(new Intent(Organising_Committee_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

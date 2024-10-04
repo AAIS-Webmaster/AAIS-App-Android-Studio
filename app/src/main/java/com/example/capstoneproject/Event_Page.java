@@ -1,6 +1,6 @@
 package com.example.capstoneproject;
 
-import static com.example.capstoneproject.Home.END_SCALE;
+import static com.example.capstoneproject.Home_Page.END_SCALE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -533,7 +533,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
             public void onClick(View v) {
                 dbHelper.deleteEvent(title, String.valueOf(event_date), start, end, text_chair);
                 dialog.dismiss(); // Close dialog after confirming
-                startActivity(new Intent(Event_Page.this, HomePage.class));
+                startActivity(new Intent(Event_Page.this, Session_Page.class));
             }
         });
 
@@ -652,10 +652,10 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(Event_Page.this, Home.class));
+            startActivity(new Intent(Event_Page.this, Home_Page.class));
         }
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Event_Page.this, HomePage.class));
+            startActivity(new Intent(Event_Page.this, Session_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Event_Page.this, QR_check_in.class));
@@ -664,7 +664,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
             startActivity(new Intent(Event_Page.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(Event_Page.this, Organising_Committee.class));
+            startActivity(new Intent(Event_Page.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
             startActivity(new Intent(Event_Page.this, Group_Chat_Page.class));

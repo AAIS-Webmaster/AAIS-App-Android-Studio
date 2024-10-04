@@ -225,7 +225,7 @@ public class Pop_up_add_event extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Pop_up_add_event.this, HomePage.class));
+                startActivity(new Intent(Pop_up_add_event.this, Session_Page.class));
             }
         });
 
@@ -318,7 +318,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
                         // Send the events to the database
                         dbHelper.sendEvents(events);
-                        startActivity(new Intent(Pop_up_add_event.this, HomePage.class));
+                        startActivity(new Intent(Pop_up_add_event.this, Session_Page.class));
 
                     } catch (DateTimeParseException e) {
                         System.err.println("Invalid time format: " + e.getMessage());

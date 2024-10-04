@@ -28,7 +28,7 @@
             android:name=".Group_Chat_Page"
             android:exported="false" />
         <activity
-            android:name=".Organising_Committee"
+            android:name=".Organising_Committee_Page"
             android:exported="false" />
         <activity
             android:name=".QR_check_in"
@@ -40,16 +40,16 @@
             android:name=".Event_Page"
             android:exported="false" />
         <activity
-            android:name=".HomePage"
+            android:name=".Session_Page"
             android:exported="false" />
         <activity
-            android:name=".Pop_up"
+            android:name=".Pop_up_Announcement"
             android:exported="false" />
         <activity
             android:name=".Announcement_Page"
             android:exported="false" />
         <activity
-            android:name=".Home"
+            android:name=".Home_Page"
             android:exported="false" />
         <activity
             android:name=".Google_Sign_In_Page"

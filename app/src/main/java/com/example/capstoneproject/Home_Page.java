@@ -47,7 +47,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class Home_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView user, user_icon_text;
     Button unseen;
@@ -153,7 +153,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://acis.aaisnet.org/acis2024/tracks/"));
                     startActivity(intent);
                 } catch (Exception e){
-                    Toast.makeText(Home.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -161,7 +161,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         site_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home.this, Site_Map_Page.class));
+                startActivity(new Intent(Home_Page.this, Site_Map_Page.class));
             }
         });
 
@@ -191,7 +191,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home.this, QR_check_in.class));
+                startActivity(new Intent(Home_Page.this, QR_check_in.class));
             }
         });
 
@@ -205,14 +205,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home.this, Announcement_Page.class));
+                startActivity(new Intent(Home_Page.this, Announcement_Page.class));
             }
         });
 
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home.this, Announcement_Page.class));
+                startActivity(new Intent(Home_Page.this, Announcement_Page.class));
             }
         });
 
@@ -310,14 +310,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                     announcementRecycler.setAdapter(adapter3);
 
                 } else {
-                    Toast.makeText(Home.this, "No events found.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(Home.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Home_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -515,29 +515,29 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Home.this, HomePage.class));
+            startActivity(new Intent(Home_Page.this, Session_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
-            startActivity(new Intent(Home.this, QR_check_in.class));
+            startActivity(new Intent(Home_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){
-            startActivity(new Intent(Home.this, Site_Map_Page.class));
+            startActivity(new Intent(Home_Page.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(Home.this, Organising_Committee.class));
+            startActivity(new Intent(Home_Page.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
-            startActivity(new Intent(Home.this, Group_Chat_Page.class));
+            startActivity(new Intent(Home_Page.this, Group_Chat_Page.class));
         }
         if(item.toString().equals("About")){
-            startActivity(new Intent(Home.this, About_Page.class));
+            startActivity(new Intent(Home_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Home.this, Google_Sign_In_Page.class));
+                    startActivity(new Intent(Home_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }
