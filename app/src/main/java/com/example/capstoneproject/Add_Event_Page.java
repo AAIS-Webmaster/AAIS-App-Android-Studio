@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Pop_up_add_event extends AppCompatActivity {
+public class Add_Event_Page extends AppCompatActivity {
 
     TextView addStartTime, addEndTime, addDate, error, paper1_text, paper2_text, paper3_text, paper4_text;
     CardView show_location, paper21, paper22, paper31, paper32, paper41, paper42;
@@ -225,7 +225,7 @@ public class Pop_up_add_event extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Pop_up_add_event.this, Session_Page.class));
+                startActivity(new Intent(Add_Event_Page.this, Session_Page.class));
             }
         });
 
@@ -318,7 +318,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
                         // Send the events to the database
                         dbHelper.sendEvents(events);
-                        startActivity(new Intent(Pop_up_add_event.this, Session_Page.class));
+                        startActivity(new Intent(Add_Event_Page.this, Session_Page.class));
 
                     } catch (DateTimeParseException e) {
                         System.err.println("Invalid time format: " + e.getMessage());
@@ -345,7 +345,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
                  int style = AlertDialog.THEME_HOLO_LIGHT;
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(Pop_up_add_event.this, style, onTimeSetListener, hour, minute, true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(Add_Event_Page.this, style, onTimeSetListener, hour, minute, true);
                 timePickerDialog.show();
             }
         });
@@ -368,7 +368,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
                 int style = AlertDialog.THEME_HOLO_LIGHT;
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(Pop_up_add_event.this, style, onTimeSetListener, hour, minute, true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(Add_Event_Page.this, style, onTimeSetListener, hour, minute, true);
                 timePickerDialog.show();
             }
         });
@@ -394,13 +394,13 @@ public class Pop_up_add_event extends AppCompatActivity {
         }
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.spinner_items, R.layout.spinner_item);
-        adapter.setDropDownViewResource(R.layout.spinner_item);
+                R.array.spinner_items, R.layout.spinner_design);
+        adapter.setDropDownViewResource(R.layout.spinner_design);
         spinner.setAdapter(adapter);
 
         ArrayAdapter<CharSequence> track_adapter = ArrayAdapter.createFromResource(this,
-                R.array.tracks_spinner, R.layout.spinner_item);
-        adapter.setDropDownViewResource(R.layout.spinner_item);
+                R.array.tracks_spinner, R.layout.spinner_design);
+        adapter.setDropDownViewResource(R.layout.spinner_design);
         track_spinner.setAdapter(track_adapter);
 
         // Set a listener for the Number of Paper Spinner

@@ -53,7 +53,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Event_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class Session_Details_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int REQUEST_CODE = 1001;
     String personName, personEmail, title, event_address, selected_track, event_location,
@@ -178,10 +178,10 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
             @Override
             public void onClick(View v) {
                 // Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
-                if (ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
                     // If not, request the permissions
-                    ActivityCompat.requestPermissions(Event_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
+                    ActivityCompat.requestPermissions(Session_Details_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                 } else {
                     if (!eventExists) {
                         Intent intent = new Intent(Intent.ACTION_INSERT);
@@ -223,10 +223,10 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                             eventExists = isEventInCalendar(title, start_time, end_time);
                             if (eventExists) {
                                 favorite.setImageResource(R.drawable.baseline_favorite_24);
-                                Toast.makeText(Event_Page.this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Session_Details_Page.this, "Favourite Event!", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(Event_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Session_Details_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         removeEventFromCalendar();
@@ -238,14 +238,14 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Event_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Details_Page.this, Announcement_Page.class));
             }
         });
 
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Event_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Details_Page.this, Announcement_Page.class));
             }
         });
 
@@ -343,20 +343,20 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                                 paper4.setText(paper4_name);
 
                                 // Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
-                                if (ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
-                                        ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                                if (ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+                                        ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
                                     // If not, request the permissions
-                                    ActivityCompat.requestPermissions(Event_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
+                                    ActivityCompat.requestPermissions(Session_Details_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                                 } else {
                                     // Permissions are already granted, check event existence
                                     // Start the first check
                                     handler.post(checkEventRunnable);
                                 }
 
-                                if (ContextCompat.checkSelfPermission(Event_Page.this, Manifest.permission.WRITE_CALENDAR)
+                                if (ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.WRITE_CALENDAR)
                                         != PackageManager.PERMISSION_GRANTED) {
                                     // Request the permission
-                                    ActivityCompat.requestPermissions(Event_Page.this,
+                                    ActivityCompat.requestPermissions(Session_Details_Page.this,
                                             new String[]{Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                                 }
 
@@ -364,14 +364,14 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                         }
 
                     } else {
-                        Toast.makeText(Event_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Session_Details_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onError(Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(Event_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Details_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -383,7 +383,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper1_uri);
                     startActivity(intent);
                 } catch (Exception e){
-                    Toast.makeText(Event_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -395,7 +395,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper2_uri);
                     startActivity(intent);
                 } catch (Exception e){
-                    Toast.makeText(Event_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -407,7 +407,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper3_uri);
                     startActivity(intent);
                 } catch (Exception e){
-                    Toast.makeText(Event_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -419,7 +419,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper4_uri);
                     startActivity(intent);
                 } catch (Exception e){
-                    Toast.makeText(Event_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -463,7 +463,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         String end = sdf.format(endTime);
 
         // Inflate the custom layout
-        LayoutInflater inflater = LayoutInflater.from(Event_Page.this);
+        LayoutInflater inflater = LayoutInflater.from(Session_Details_Page.this);
         View dialogView = inflater.inflate(R.layout.dialog_confirmation, null);
 
         // Initialize the custom views
@@ -516,7 +516,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         }
 
         // Create and show the dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(Event_Page.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Session_Details_Page.this);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
 
@@ -533,7 +533,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
             public void onClick(View v) {
                 dbHelper.deleteEvent(title, String.valueOf(event_date), start, end, text_chair);
                 dialog.dismiss(); // Close dialog after confirming
-                startActivity(new Intent(Event_Page.this, Session_Page.class));
+                startActivity(new Intent(Session_Details_Page.this, Session_Page.class));
             }
         });
 
@@ -652,32 +652,32 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){
-            startActivity(new Intent(Event_Page.this, Home_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, Home_Page.class));
         }
         if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Event_Page.this, Session_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, Session_Page.class));
         }
         if(item.toString().equals("QR Check-In")){
-            startActivity(new Intent(Event_Page.this, QR_check_in.class));
+            startActivity(new Intent(Session_Details_Page.this, QR_check_in.class));
         }
         if(item.toString().equals("Site Map")){
-            startActivity(new Intent(Event_Page.this, Site_Map_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, Site_Map_Page.class));
         }
         if(item.toString().equals("Committee")){
-            startActivity(new Intent(Event_Page.this, Organising_Committee_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, Organising_Committee_Page.class));
         }
         if(item.toString().equals("Chat")){
-            startActivity(new Intent(Event_Page.this, Group_Chat_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, Group_Chat_Page.class));
         }
         if(item.toString().equals("About")){
-            startActivity(new Intent(Event_Page.this, About_Page.class));
+            startActivity(new Intent(Session_Details_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Event_Page.this, Google_Sign_In_Page.class));
+                    startActivity(new Intent(Session_Details_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

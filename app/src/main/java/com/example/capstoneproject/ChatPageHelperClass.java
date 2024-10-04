@@ -6,12 +6,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
-public class FirstHelperClass {
+public class ChatPageHelperClass {
     String id, name, conversation_text, localDateTime, email;
     boolean isHeader;
 
     // Constructor for messages
-    public FirstHelperClass(String id, String name, String conversation_text, String localDateTime, String email, boolean isHeader) {
+    public ChatPageHelperClass(String id, String name, String conversation_text, String localDateTime, String email, boolean isHeader) {
         this.id = id;
         this.name = name;
         this.conversation_text = conversation_text;
@@ -21,7 +21,7 @@ public class FirstHelperClass {
     }
 
     // Constructor for headers
-    public FirstHelperClass(String id, String localDateTime, boolean isHeader) {
+    public ChatPageHelperClass(String id, String localDateTime, boolean isHeader) {
         this(id, null, null, localDateTime, null, isHeader);
     }
 
@@ -93,7 +93,7 @@ public class FirstHelperClass {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        FirstHelperClass that = (FirstHelperClass) obj;
+        ChatPageHelperClass that = (ChatPageHelperClass) obj;
 
         if (isHeader != that.isHeader) return false;
         if (!Objects.equals(name, that.name)) return false;

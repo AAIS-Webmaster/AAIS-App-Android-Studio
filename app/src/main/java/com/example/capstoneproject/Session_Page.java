@@ -57,7 +57,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
     RecyclerView generalRecycler;
     RecyclerView.Adapter adapter;
     private MyDatabaseHelper dbHelper;
-    private GeneralAdapter.RecyclerViewClickListener listener;
+    private SessionAdapter.RecyclerViewClickListener listener;
     ArrayList<String> pos;
     FloatingActionButton AddEvent;
     private TextView monthYearText;
@@ -165,7 +165,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         AddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Session_Page.this, Pop_up_add_event.class);
+                Intent intent = new Intent(Session_Page.this, Add_Event_Page.class);
                 intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth()));
                 intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue()));
                 intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear()));
@@ -200,7 +200,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         generalRecycler.setHasFixedSize(true);
         generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        ArrayList<GeneralHelperClass> generalLocations = new ArrayList<>();
+        ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
 
         pos = new ArrayList<>();
 //        ArrayList<Event> filteredEvents = new ArrayList<>();
@@ -215,8 +215,8 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
                         String name = event.getName();
                         String time = event.getStart_time().toString()
                                 + " - " + event.getEnd_time().toString();
-                        generalLocations.add(new GeneralHelperClass(track, name, time));
-                        adapter = new GeneralAdapter(generalLocations, listener);
+                        generalLocations.add(new SessionHelperClass(track, name, time));
+                        adapter = new SessionAdapter(generalLocations, listener);
                         generalRecycler.setAdapter(adapter);
                     }
 
@@ -384,13 +384,13 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         generalRecycler.setHasFixedSize(true);
         generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        ArrayList<GeneralHelperClass> generalLocations = new ArrayList<>();
+        ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
         event_present = false;
 
         dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
             @Override
             public void onEventsRetrieved(List<Event> events) {
-                ArrayList<GeneralHelperClass> generalLocations = new ArrayList<>();
+                ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
                 event_present = false;
                 if (events != null && !events.isEmpty()) {
                     // Sort and display events
@@ -407,7 +407,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
 
                         if (date.equals(current_date)) {
                             event_present = true;
-                            generalLocations.add(new GeneralHelperClass("Track: " + event.getTrack(), event.getName(), time));
+                            generalLocations.add(new SessionHelperClass("Track: " + event.getTrack(), event.getName(), time));
                         }
                     }
 
@@ -417,7 +417,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
                         error.setVisibility(View.VISIBLE);
                     }
 
-                    adapter = new GeneralAdapter(generalLocations, listener);
+                    adapter = new SessionAdapter(generalLocations, listener);
                     generalRecycler.setAdapter(adapter);
 
                 } else {

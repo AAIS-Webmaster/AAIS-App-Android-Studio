@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
-    tools:context=".Event_Page">
+    tools:context=".Session_Details_Page">
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        app:headerLayout="@layout/nav_header"
+        app:headerLayout="@layout/drawer_header"
         android:theme="@style/navigationTheme"
         android:background="@color/black"
         app:itemTextColor="@color/white"

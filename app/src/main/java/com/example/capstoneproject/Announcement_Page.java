@@ -86,7 +86,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         addAnnouncement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Announcement_Page.this, Pop_up_Announcement.class));
+                startActivity(new Intent(Announcement_Page.this, Add_Announcement_Page.class));
             }
         });
     }

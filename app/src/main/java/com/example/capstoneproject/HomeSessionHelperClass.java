@@ -1,9 +1,9 @@
 package com.example.capstoneproject;
 
-public class HomeAnnouncementHelperClass {
+public class HomeSessionHelperClass {
     String subject, date, time, track;
 
-    public HomeAnnouncementHelperClass(String subject, String date, String time, String track) {
+    public HomeSessionHelperClass(String subject, String date, String time, String track) {
         this.subject = subject;
         this.date = date;
         this.time = time;

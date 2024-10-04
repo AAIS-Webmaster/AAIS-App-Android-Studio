@@ -1,9 +1,9 @@
 package com.example.capstoneproject;
 
-public class GeneralHelperClass {
+public class SessionHelperClass {
     String track, event_name, time;
 
-    public GeneralHelperClass(String track, String event_name, String time) {
+    public SessionHelperClass(String track, String event_name, String time) {
         this.track = track;
         this.event_name = event_name;
         this.time = time;

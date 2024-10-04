@@ -34,16 +34,16 @@
             android:name=".QR_check_in"
             android:exported="false" />
         <activity
-            android:name=".Pop_up_add_event"
+            android:name=".Add_Event_Page"
             android:exported="false" />
         <activity
-            android:name=".Event_Page"
+            android:name=".Session_Details_Page"
             android:exported="false" />
         <activity
             android:name=".Session_Page"
             android:exported="false" />
         <activity
-            android:name=".Pop_up_Announcement"
+            android:name=".Add_Announcement_Page"
             android:exported="false" />
         <activity
             android:name=".Announcement_Page"

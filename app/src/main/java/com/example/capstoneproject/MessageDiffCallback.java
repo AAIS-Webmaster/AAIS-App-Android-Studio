@@ -4,10 +4,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import java.util.List;
 
 public class MessageDiffCallback extends DiffUtil.Callback {
-    private final List<FirstHelperClass> oldList;
-    private final List<FirstHelperClass> newList;
+    private final List<ChatPageHelperClass> oldList;
+    private final List<ChatPageHelperClass> newList;
 
-    public MessageDiffCallback(List<FirstHelperClass> oldList, List<FirstHelperClass> newList) {
+    public MessageDiffCallback(List<ChatPageHelperClass> oldList, List<ChatPageHelperClass> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }
@@ -24,15 +24,15 @@ public class MessageDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        FirstHelperClass oldItem = oldList.get(oldItemPosition);
-        FirstHelperClass newItem = newList.get(newItemPosition);
+        ChatPageHelperClass oldItem = oldList.get(oldItemPosition);
+        ChatPageHelperClass newItem = newList.get(newItemPosition);
         return oldItem != null && newItem != null && oldItem.getId() != null && oldItem.getId().equals(newItem.getId());
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        FirstHelperClass oldItem = oldList.get(oldItemPosition);
-        FirstHelperClass newItem = newList.get(newItemPosition);
+        ChatPageHelperClass oldItem = oldList.get(oldItemPosition);
+        ChatPageHelperClass newItem = newList.get(newItemPosition);
         if (oldItem == null || newItem == null) {
             return false;
         }

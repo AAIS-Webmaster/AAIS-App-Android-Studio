@@ -43,7 +43,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
     private EditText message;
     private ImageButton send;
     private RecyclerView firstRecycler;
-    private FirstAdapter adapter;
+    private ChatPageAdapter adapter;
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
     private String personName, personEmail;
@@ -53,7 +53,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
     ImageView menuIcon, notification;
     Button unseen;
     private MyDatabaseHelper dbHelper;
-    private ArrayList<FirstHelperClass> groupedMessages;
+    private ArrayList<ChatPageHelperClass> groupedMessages;
     private String lastInsertedDate = "";
 
     @Override
@@ -96,7 +96,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
         firstRecycler.setHasFixedSize(true);
         firstRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         groupedMessages = new ArrayList<>();
-        adapter = new FirstAdapter(groupedMessages);
+        adapter = new ChatPageAdapter(groupedMessages);
         firstRecycler.setAdapter(adapter);
 
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
@@ -186,7 +186,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
     private void listenForMessages() {
         dbHelper.getConversations(new MyDatabaseHelper.FirstHelperClassRetrievalCallback() {
             @Override
-            public void onDataRetrieved(List<FirstHelperClass> conversations) {
+            public void onDataRetrieved(List<ChatPageHelperClass> conversations) {
                 // Ensure data is properly formatted
                 updateRecyclerView(conversations);
             }
@@ -198,7 +198,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
         });
     }
 
-    private void updateRecyclerView(List<FirstHelperClass> newConversations) {
+    private void updateRecyclerView(List<ChatPageHelperClass> newConversations) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MessageDiffCallback(groupedMessages, newConversations));
         groupedMessages.clear();
         groupedMessages.addAll(newConversations);

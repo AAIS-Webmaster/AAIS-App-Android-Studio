@@ -8,32 +8,32 @@ public class Event
 {
     public static ArrayList<Event> eventsList = new ArrayList<>();
 
-    public static ArrayList<Event> eventsForDate(LocalDate date)
-    {
-        ArrayList<Event> events = new ArrayList<>();
-
-        for(Event event : eventsList)
-        {
-            if(event.getDate().equals(date))
-                events.add(event);
-        }
-        return events;
-    }
-
-    public static ArrayList<Event> eventsForDateAndTime(LocalDate date, LocalTime time)
-    {
-        ArrayList<Event> events = new ArrayList<>();
-
-        for(Event event : eventsList)
-        {
-            int eventHour = event.start_time.getHour();
-            int cellHour = time.getHour();
-            if(event.getDate().equals(date) && eventHour == cellHour)
-                events.add(event);
-        }
-
-        return events;
-    }
+//    public static ArrayList<Event> eventsForDate(LocalDate date)
+//    {
+//        ArrayList<Event> events = new ArrayList<>();
+//
+//        for(Event event : eventsList)
+//        {
+//            if(event.getDate().equals(date))
+//                events.add(event);
+//        }
+//        return events;
+//    }
+//
+//    public static ArrayList<Event> eventsForDateAndTime(LocalDate date, LocalTime time)
+//    {
+//        ArrayList<Event> events = new ArrayList<>();
+//
+//        for(Event event : eventsList)
+//        {
+//            int eventHour = event.start_time.getHour();
+//            int cellHour = time.getHour();
+//            if(event.getDate().equals(date) && eventHour == cellHour)
+//                events.add(event);
+//        }
+//
+//        return events;
+//    }
 
     private String track, name, location, address, chair, paper1_name, paper1_url, paper2_name, paper2_url,
             paper3_name, paper3_url, paper4_name, paper4_url;

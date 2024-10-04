@@ -13,15 +13,15 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class FirstAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChatPageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_MESSAGE = 1;
 
-    ArrayList<FirstHelperClass> firstLocations;
+    ArrayList<ChatPageHelperClass> firstLocations;
     private MyDatabaseHelper dbHelper;
 
-    public FirstAdapter(ArrayList<FirstHelperClass> firstLocations) {
+    public ChatPageAdapter(ArrayList<ChatPageHelperClass> firstLocations) {
         this.firstLocations = firstLocations;
     }
 
@@ -41,14 +41,14 @@ public class FirstAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.date_header, parent, false);
             return new DateHeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.first_card_design, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_card_design, parent, false);
             return new MessageViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        FirstHelperClass item = firstLocations.get(position);
+        ChatPageHelperClass item = firstLocations.get(position);
         dbHelper = new MyDatabaseHelper();
 
         if (holder.getItemViewType() == VIEW_TYPE_HEADER) {
@@ -130,7 +130,7 @@ public class FirstAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public void setData(ArrayList<FirstHelperClass> newFirstLocations) {
+    public void setData(ArrayList<ChatPageHelperClass> newFirstLocations) {
         this.firstLocations = newFirstLocations;
         notifyDataSetChanged(); // Notify the adapter of data changes
     }

@@ -41,7 +41,7 @@ public class MyDatabaseHelper {
     }
 
     public interface FirstHelperClassRetrievalCallback {
-        void onDataRetrieved(List<FirstHelperClass> firstHelperClasses);
+        void onDataRetrieved(List<ChatPageHelperClass> chatPageHelperClasses);
         void onError(Exception e);
     }
 
@@ -391,7 +391,7 @@ public class MyDatabaseHelper {
         conversationsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<FirstHelperClass> conversationsList = new ArrayList<>();
+                List<ChatPageHelperClass> conversationsList = new ArrayList<>();
                 if (dataSnapshot.exists()) {
                     String lastDateHeader = null;
 
@@ -403,7 +403,7 @@ public class MyDatabaseHelper {
                             String dateHeader = childSnapshot.child("dateHeader").getValue(String.class);
                             if (!dateHeader.equals(lastDateHeader)) {
                                 // Only add header if it's different from the last one
-                                FirstHelperClass header = new FirstHelperClass(null, dateHeader, true);
+                                ChatPageHelperClass header = new ChatPageHelperClass(null, dateHeader, true);
                                 conversationsList.add(header);
                                 lastDateHeader = dateHeader;
                             }
@@ -414,7 +414,7 @@ public class MyDatabaseHelper {
                             String dateTime = childSnapshot.child("dateTime").getValue(String.class);
                             String email = childSnapshot.child("email").getValue(String.class); // Extract email
 
-                            FirstHelperClass conversation = new FirstHelperClass(id, name, conversationText, dateTime, email, false);
+                            ChatPageHelperClass conversation = new ChatPageHelperClass(id, name, conversationText, dateTime, email, false);
                             conversationsList.add(conversation);
                         }
                     }

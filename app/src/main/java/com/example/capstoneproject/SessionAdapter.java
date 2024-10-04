@@ -14,38 +14,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralViewHolder> {
+public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.GeneralViewHolder> {
 
-    ArrayList<GeneralHelperClass> generalLocations;
+    ArrayList<SessionHelperClass> sessions;
     RecyclerViewClickListener listener;
 
-    public GeneralAdapter(ArrayList<GeneralHelperClass> generalLocations, RecyclerViewClickListener listener) {
-        this.generalLocations = generalLocations;
+    public SessionAdapter(ArrayList<SessionHelperClass> sessions, RecyclerViewClickListener listener) {
+        this.sessions = sessions;
         this.listener = listener;
     }
 
     @NonNull
     @Override
     public GeneralViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.general_card_design, parent, false);
-        GeneralViewHolder generalViewHolder = new GeneralViewHolder(view, listener);
-        return generalViewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.session_card_design, parent, false);
+        return new GeneralViewHolder(view, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull GeneralViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        GeneralHelperClass generalHelperClass = generalLocations.get(position);
+        SessionHelperClass sessionHelperClass = sessions.get(position);
 
-        holder.event_name.setText(generalHelperClass.getEvent_name());
-        holder.track.setText(generalHelperClass.getTrack());
-        holder.time.setText(generalHelperClass.getTime());
+        holder.event_name.setText(sessionHelperClass.getEvent_name());
+        holder.track.setText(sessionHelperClass.getTrack());
+        holder.time.setText(sessionHelperClass.getTime());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, Event_Page.class);
-                intent.putExtra("event_name", generalLocations.get(position).event_name);
-//                intent.putExtra("time", time);
+                Intent intent = new Intent(context, Session_Details_Page.class);
+                intent.putExtra("event_name", sessions.get(position).event_name);
                 context.startActivity(intent);
             }
         });
@@ -54,9 +52,8 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, Event_Page.class);
-                intent.putExtra("event_name", generalLocations.get(position).event_name);
-//                intent.putExtra("time", time);
+                Intent intent = new Intent(context, Session_Details_Page.class);
+                intent.putExtra("event_name", sessions.get(position).event_name);
                 context.startActivity(intent);
             }
         });
@@ -64,7 +61,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
 
     @Override
     public int getItemCount() {
-        return generalLocations.size();
+        return sessions.size();
     }
 
     public static class GeneralViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -75,7 +72,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
         public GeneralViewHolder(@NonNull View itemView, RecyclerViewClickListener listener) {
             super(itemView);
 
-            //Hooks
+            // Hooks
             track = itemView.findViewById(R.id.track);
             event_name = itemView.findViewById(R.id.event_name);
             time = itemView.findViewById(R.id.time);

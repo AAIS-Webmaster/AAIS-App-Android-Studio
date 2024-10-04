@@ -65,7 +65,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
     RecyclerView.Adapter adapter, adapter2, adapter3;
     private Bitmap imageBitmap;
     private MyDatabaseHelper dbHelper;
-    private GeneralAdapter.RecyclerViewClickListener listener;
+    private SessionAdapter.RecyclerViewClickListener listener;
     ArrayList<String> pos;
 
     @Override
@@ -244,7 +244,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onEventsRetrieved(List<Event> events) {
                 if (events != null && !events.isEmpty()) {
-                    ArrayList<HomeAnnouncementHelperClass> announcementLocations = new ArrayList<>();
+                    ArrayList<HomeSessionHelperClass> announcementLocations = new ArrayList<>();
                     // Sort events by date, then by start time, and finally by end time
                     Collections.sort(events, new Comparator<Event>() {
                         @Override
@@ -295,7 +295,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                         String track = event.getTrack();
                         String eventTime = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
 
-                        announcementLocations.add(new HomeAnnouncementHelperClass(
+                        announcementLocations.add(new HomeSessionHelperClass(
                                 eventName,
                                 "Date: " + event.getDate().toString(),
                                 "Duration: " + eventTime,
@@ -306,7 +306,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                     }
 
                     // Update RecyclerView with the adapter
-                    adapter3 = new HomeAnnouncementAdapter(announcementLocations, listener);
+                    adapter3 = new HomeSessionAdapter(announcementLocations, listener);
                     announcementRecycler.setAdapter(adapter3);
 
                 } else {
@@ -340,7 +340,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         generalRecycler.setHasFixedSize(true);
         generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        ArrayList<GeneralHelperClass> generalLocations = new ArrayList<>();
+        ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
         new Thread(new Runnable() {
             @Override
             public void run() {

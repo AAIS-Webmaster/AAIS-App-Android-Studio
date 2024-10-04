@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnouncementAdapter.HomeAnnouncementViewHolder> {
+public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.HomeAnnouncementViewHolder> {
 
-    ArrayList<HomeAnnouncementHelperClass> homeAnnouncementLocations;
-    GeneralAdapter.RecyclerViewClickListener listener;
+    ArrayList<HomeSessionHelperClass> homeAnnouncementLocations;
+    SessionAdapter.RecyclerViewClickListener listener;
 
-    public HomeAnnouncementAdapter(ArrayList<HomeAnnouncementHelperClass> homeAnnouncementLocations, GeneralAdapter.RecyclerViewClickListener listener) {
+    public HomeSessionAdapter(ArrayList<HomeSessionHelperClass> homeAnnouncementLocations, SessionAdapter.RecyclerViewClickListener listener) {
         this.homeAnnouncementLocations = homeAnnouncementLocations;
         this.listener = listener;
     }
@@ -26,25 +26,25 @@ public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnounceme
     @NonNull
     @Override
     public HomeAnnouncementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_announcement_card_design,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_page_session_card_design,parent,false);
         HomeAnnouncementViewHolder homeAnnouncementViewHolder = new HomeAnnouncementViewHolder(view, listener);
         return homeAnnouncementViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeAnnouncementViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        HomeAnnouncementHelperClass homeAnnouncementHelperClass = homeAnnouncementLocations.get(position);
+        HomeSessionHelperClass homeSessionHelperClass = homeAnnouncementLocations.get(position);
 
-        holder.subject.setText(homeAnnouncementHelperClass.getSubject());
-        holder.date.setText(homeAnnouncementHelperClass.getDate());
-        holder.time.setText(homeAnnouncementHelperClass.getTime());
-        holder.track.setText(homeAnnouncementHelperClass.getTrack());
+        holder.subject.setText(homeSessionHelperClass.getSubject());
+        holder.date.setText(homeSessionHelperClass.getDate());
+        holder.time.setText(homeSessionHelperClass.getTime());
+        holder.track.setText(homeSessionHelperClass.getTrack());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, Event_Page.class);
+                Intent intent = new Intent(context, Session_Details_Page.class);
                 intent.putExtra("event_name", homeAnnouncementLocations.get(position).subject);
 //                intent.putExtra("time", time);
                 context.startActivity(intent);
@@ -60,9 +60,9 @@ public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnounceme
     public static class HomeAnnouncementViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView subject, date, time, track;
-        GeneralAdapter.RecyclerViewClickListener listener;
+        SessionAdapter.RecyclerViewClickListener listener;
 
-        public HomeAnnouncementViewHolder(@NonNull View itemView, GeneralAdapter.RecyclerViewClickListener listener) {
+        public HomeAnnouncementViewHolder(@NonNull View itemView, SessionAdapter.RecyclerViewClickListener listener) {
             super(itemView);
 
             //Hooks
