@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.GeneralViewHolder> {
+public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionViewHolder> {
 
     ArrayList<SessionHelperClass> sessions;
     RecyclerViewClickListener listener;
@@ -26,13 +26,13 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.GeneralV
 
     @NonNull
     @Override
-    public GeneralViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SessionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.session_card_design, parent, false);
-        return new GeneralViewHolder(view, listener);
+        return new SessionViewHolder(view, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GeneralViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull SessionViewHolder holder, @SuppressLint("RecyclerView") int position) {
         SessionHelperClass sessionHelperClass = sessions.get(position);
 
         holder.event_name.setText(sessionHelperClass.getEvent_name());
@@ -64,12 +64,12 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.GeneralV
         return sessions.size();
     }
 
-    public static class GeneralViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class SessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView track, event_name, time;
         ImageButton info;
         RecyclerViewClickListener listener;
 
-        public GeneralViewHolder(@NonNull View itemView, RecyclerViewClickListener listener) {
+        public SessionViewHolder(@NonNull View itemView, RecyclerViewClickListener listener) {
             super(itemView);
 
             // Hooks

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.HomeAnnouncementViewHolder> {
+public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.HomeSessionViewHolder> {
 
     ArrayList<HomeSessionHelperClass> homeAnnouncementLocations;
     SessionAdapter.RecyclerViewClickListener listener;
@@ -25,14 +25,14 @@ public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.
 
     @NonNull
     @Override
-    public HomeAnnouncementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HomeSessionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_page_session_card_design,parent,false);
-        HomeAnnouncementViewHolder homeAnnouncementViewHolder = new HomeAnnouncementViewHolder(view, listener);
-        return homeAnnouncementViewHolder;
+        HomeSessionViewHolder homeSessionViewHolder = new HomeSessionViewHolder(view, listener);
+        return homeSessionViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeAnnouncementViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull HomeSessionViewHolder holder, @SuppressLint("RecyclerView") int position) {
         HomeSessionHelperClass homeSessionHelperClass = homeAnnouncementLocations.get(position);
 
         holder.subject.setText(homeSessionHelperClass.getSubject());
@@ -57,12 +57,12 @@ public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.
         return homeAnnouncementLocations.size();
     }
 
-    public static class HomeAnnouncementViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class HomeSessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView subject, date, time, track;
         SessionAdapter.RecyclerViewClickListener listener;
 
-        public HomeAnnouncementViewHolder(@NonNull View itemView, SessionAdapter.RecyclerViewClickListener listener) {
+        public HomeSessionViewHolder(@NonNull View itemView, SessionAdapter.RecyclerViewClickListener listener) {
             super(itemView);
 
             //Hooks

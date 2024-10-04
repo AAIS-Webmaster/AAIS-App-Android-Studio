@@ -2,11 +2,10 @@ package com.example.capstoneproject;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 public class Event
 {
-    public static ArrayList<Event> eventsList = new ArrayList<>();
+//    public static ArrayList<Event> eventsList = new ArrayList<>();
 
 //    public static ArrayList<Event> eventsForDate(LocalDate date)
 //    {

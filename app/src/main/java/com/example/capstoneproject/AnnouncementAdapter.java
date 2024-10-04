@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.ViewHolder> {
+public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.AnnouncementViewHolder> {
 
     private final List<AnnouncementHelperClass> announcements;
     private final String currentUserEmail; // Add this to check user role
@@ -26,13 +26,13 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AnnouncementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.announcement_card_design, parent, false);
-        return new ViewHolder(view);
+        return new AnnouncementViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AnnouncementViewHolder holder, int position) {
         AnnouncementHelperClass announcement = announcements.get(position);
 
         holder.titleTextView.setText(announcement.getTitle());
@@ -101,13 +101,13 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         dialog.show();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class AnnouncementViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView descriptionTextView;
         TextView dateTimeTextView;
         ImageView deleteImageView;
 
-        public ViewHolder(@NonNull View itemView) {
+        public AnnouncementViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.announcement_title);
             descriptionTextView = itemView.findViewById(R.id.announcement_description);
