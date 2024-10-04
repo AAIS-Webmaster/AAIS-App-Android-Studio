@@ -1,6 +1,5 @@
 package com.example.capstoneproject;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,11 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,10 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pop_up extends Activity {
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    String personName, personEmail;
+public class Pop_up extends AppCompatActivity {
     EditText title, description;
     TextView error;
     Button post, cancel;
@@ -38,28 +30,16 @@ public class Pop_up extends Activity {
         setContentView(R.layout.announcement_pop_up_window);
         dbHelper = new MyDatabaseHelper();
 
-//        DisplayMetrics dm = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
-//        int width = dm.widthPixels;
-//        int height = dm.heightPixels;
-//
-//        getWindow().setLayout((int)(width*0.8), (int)(height*0.8));
-
+        // Hooks
         title = findViewById(R.id.enter_subject);
         description = findViewById(R.id.enter_description);
         error = findViewById(R.id.error);
         post = findViewById(R.id.post);
         cancel = findViewById(R.id.cancel_action);
-
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
-
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null) {
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
-        }
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -65,10 +65,10 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         addAnnouncement = findViewById(R.id.add_announcement);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null) {
+        if(acct != null) {
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
 
@@ -208,7 +208,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(Announcement_Page.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(Announcement_Page.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -222,7 +222,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Announcement_Page.this, MainActivity.class));
+                    startActivity(new Intent(Announcement_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

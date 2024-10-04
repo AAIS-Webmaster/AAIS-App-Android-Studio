@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +38,7 @@ public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnounceme
         holder.subject.setText(homeAnnouncementHelperClass.getSubject());
         holder.date.setText(homeAnnouncementHelperClass.getDate());
         holder.time.setText(homeAnnouncementHelperClass.getTime());
+        holder.track.setText(homeAnnouncementHelperClass.getTrack());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +59,7 @@ public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnounceme
 
     public static class HomeAnnouncementViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView subject, date, time;
+        TextView subject, date, time, track;
         GeneralAdapter.RecyclerViewClickListener listener;
 
         public HomeAnnouncementViewHolder(@NonNull View itemView, GeneralAdapter.RecyclerViewClickListener listener) {
@@ -69,6 +69,7 @@ public class HomeAnnouncementAdapter extends RecyclerView.Adapter<HomeAnnounceme
             subject = itemView.findViewById(R.id.subject);
             date = itemView.findViewById(R.id.date);
             time = itemView.findViewById(R.id.time);
+            track = itemView.findViewById(R.id.track);
 
             this.listener = listener;
             itemView.setOnClickListener(this);

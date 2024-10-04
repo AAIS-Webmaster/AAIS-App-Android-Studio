@@ -35,16 +35,17 @@ public class Event
         return events;
     }
 
-    private String name, location, address, chair, paper1_name, paper1_url, paper2_name, paper2_url,
+    private String track, name, location, address, chair, paper1_name, paper1_url, paper2_name, paper2_url,
             paper3_name, paper3_url, paper4_name, paper4_url;
     private LocalDate date;
     private LocalTime start_time, end_time;
 
-    public Event(String name, LocalDate date, LocalTime start_time, LocalTime end_time, String location,
+    public Event(String track, String name, LocalDate date, LocalTime start_time, LocalTime end_time, String location,
                  String address, String chair, String paper1_name,
                  String paper1_url, String paper2_name, String paper2_url,
                  String paper3_name, String paper3_url, String paper4_name, String paper4_url)
     {
+        this.track = track;
         this.name = name;
         this.date = date;
         this.start_time = start_time;
@@ -60,6 +61,16 @@ public class Event
         this.paper3_url = paper3_url;
         this.paper4_name = paper4_name;
         this.paper4_url = paper4_url;
+    }
+
+    public String getTrack()
+    {
+        return track;
+    }
+
+    public void setTrack(String track)
+    {
+        this.track = track;
     }
 
     public String getName()

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create New Conference"
+        android:text="Create New Session"
         android:textSize="25sp"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
@@ -56,13 +56,39 @@
                     android:layout_margin="8dp"
                     app:cardCornerRadius="8dp">
 
+                    <Spinner
+                        android:id="@+id/tracksSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@color/bg"
+                        android:layout_gravity="center_horizontal" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Session Name"
+                    android:layout_margin="8dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingTop="20dp"
+                    android:fontFamily="sans-serif-condensed-medium"
+                    android:textColor="@color/text"
+                    android:textSize="20sp" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="8dp">
+
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:fontFamily="sans-serif-condensed"
                         android:background="@color/bg"
                         android:textSize="18sp"
-                        android:hint="Enter the name of the Track"
+                        android:hint="Enter the name of the Session"
                         android:padding="10dp"
                         android:textColorHint="@color/gray"
                         android:gravity="start"
@@ -180,7 +206,7 @@
                         android:layout_height="50dp"
                         android:text="Select Event Date"
                         android:onClick="openDatePicker"
-                        android:textColor="@color/gray"
+                        android:textColor="@color/text"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:textSize="18sp"
@@ -364,7 +390,7 @@
                         android:fontFamily="sans-serif-condensed"
                         android:background="@color/bg"
                         android:textSize="18sp"
-                        android:hint="Enter Paper url"
+                        android:hint="Enter Paper URL"
                         android:padding="10dp"
                         android:textColorHint="@color/gray"
                         android:gravity="start"
@@ -421,7 +447,7 @@
                         android:fontFamily="sans-serif-condensed"
                         android:background="@color/bg"
                         android:textSize="18sp"
-                        android:hint="Enter Paper url"
+                        android:hint="Enter Paper URL"
                         android:padding="10dp"
                         android:textColorHint="@color/gray"
                         android:gravity="start"
@@ -478,7 +504,7 @@
                         android:fontFamily="sans-serif-condensed"
                         android:background="@color/bg"
                         android:textSize="18sp"
-                        android:hint="Enter Paper url"
+                        android:hint="Enter Paper URL"
                         android:padding="10dp"
                         android:textColorHint="@color/gray"
                         android:gravity="start"
@@ -535,7 +561,7 @@
                         android:fontFamily="sans-serif-condensed"
                         android:background="@color/bg"
                         android:textSize="18sp"
-                        android:hint="Enter Paper url"
+                        android:hint="Enter Paper URL"
                         android:padding="10dp"
                         android:textColorHint="@color/gray"
                         android:gravity="start"
@@ -565,16 +591,6 @@
                     android:id="@+id/cancel_action"
                     android:text="CANCEL" />
 
-        <!--        <TextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Writing"-->
-        <!--            android:id="@+id/error"-->
-        <!--            android:textAlignment="center"-->
-        <!--            android:fontFamily="sans-serif-condensed"-->
-        <!--            android:textColor="@color/highlighted_item_color"-->
-        <!--            android:visibility="gone"-->
-        <!--            android:textSize="18sp"/>-->
             </LinearLayout>
         </ScrollView>
     </androidx.cardview.widget.CardView>

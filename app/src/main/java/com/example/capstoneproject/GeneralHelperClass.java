@@ -1,13 +1,16 @@
 package com.example.capstoneproject;
 
-import android.graphics.Bitmap;
-
 public class GeneralHelperClass {
-    String event_name, time;
+    String track, event_name, time;
 
-    public GeneralHelperClass(String event_name, String time) {
+    public GeneralHelperClass(String track, String event_name, String time) {
+        this.track = track;
         this.event_name = event_name;
         this.time = time;
+    }
+
+    public String getTrack() {
+        return track;
     }
 
     public String getEvent_name() {

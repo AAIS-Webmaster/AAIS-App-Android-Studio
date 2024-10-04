@@ -97,10 +97,10 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         site_map = findViewById(R.id.site_map);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if(acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
             String profileImageUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
@@ -122,29 +122,29 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             }
         }
 
-        userIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
-                    startActivity(intent);
-                } catch (Exception e){
-                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        user_icon_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
-                    startActivity(intent);
-                } catch (Exception e){
-                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        userIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
+//                    startActivity(intent);
+//                } catch (Exception e){
+//                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        user_icon_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
+//                    startActivity(intent);
+//                } catch (Exception e){
+//                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
         
         track.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,6 +203,13 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 //        });
 
         notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Home.this, Announcement_Page.class));
+            }
+        });
+
+        unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Home.this, Announcement_Page.class));
@@ -285,12 +292,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
                         // Now it's a valid future or ongoing event, so add it
                         String eventName = event.getName();
+                        String track = event.getTrack();
                         String eventTime = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
 
                         announcementLocations.add(new HomeAnnouncementHelperClass(
                                 eventName,
                                 "Date: " + event.getDate().toString(),
-                                "Duration: " + eventTime
+                                "Duration: " + eventTime,
+                                "Track: " + track
                         ));
 
                         eventCount++;
@@ -514,7 +523,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(Home.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(Home.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -528,7 +537,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Home.this, MainActivity.class));
+                    startActivity(new Intent(Home.this, Google_Sign_In_Page.class));
                 }
             });
         }

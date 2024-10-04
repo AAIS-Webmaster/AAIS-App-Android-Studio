@@ -27,7 +27,7 @@
                     android:title="Site Map"/>
                 <item
                     android:id="@+id/nav_org"
-                    android:title="Organising Committee"/>
+                    android:title="Committee"/>
             </group>
         </menu>
     </item>

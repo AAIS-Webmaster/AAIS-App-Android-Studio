@@ -36,7 +36,7 @@ public class Pop_up_add_event extends AppCompatActivity {
     NumberPicker numberPicker;
 //    ImageButton more_papers;
     int hour, minute, paper_number;
-    String numPaper;
+    String numPaper, track_selected;
     Boolean visible = false;
     private DatePickerDialog datePickerDialog;
     private MyDatabaseHelper dbHelper;
@@ -53,6 +53,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
         // Find the Spinner by ID
         Spinner spinner = findViewById(R.id.spinner);
+        Spinner track_spinner = findViewById(R.id.tracksSpinner);
         addStartTime = findViewById(R.id.add_start_time);
         addEndTime = findViewById(R.id.add_end_time);
         addDate = findViewById(R.id.add_date);
@@ -235,7 +236,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 //                    location_info = location.getText().toString();
 //                }
 
-                String track_name = track.getText().toString();
+                String name = track.getText().toString();
                 String track_location = location.getText().toString();
                 String track_address = address.getText().toString();
                 String track_date = addDate.getText().toString();
@@ -253,7 +254,7 @@ public class Pop_up_add_event extends AppCompatActivity {
 
 //                Toast.makeText(Pop_up_add_event.this, String.valueOf(location_info), Toast.LENGTH_SHORT).show();
                 // Validate if any field is empty
-                if (track_name.isEmpty()) {
+                if (name.isEmpty()) {
                     track.setError("Track name cannot be empty");
                     track.requestFocus();
                 } else if (track_location.isEmpty()) {
@@ -310,7 +311,7 @@ public class Pop_up_add_event extends AppCompatActivity {
                         LocalDate localDate = LocalDate.parse(track_date, formatterDate);
 
                         List<Event> events = new ArrayList<>();
-                        events.add(new Event(track_name, localDate, startTime, endTime,
+                        events.add(new Event(track_selected, name, localDate, startTime, endTime,
                                 location.getText().toString(), track_address, track_chair, paper_name_1, paper_url_1,
                                 paper_name_2, paper_url_2, paper_name_3, paper_url_3,
                                 paper_name_4, paper_url_4));
@@ -397,7 +398,23 @@ public class Pop_up_add_event extends AppCompatActivity {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(adapter);
 
-        // Set a listener for the Spinner
+        ArrayAdapter<CharSequence> track_adapter = ArrayAdapter.createFromResource(this,
+                R.array.tracks_spinner, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        track_spinner.setAdapter(track_adapter);
+
+        // Set a listener for the Number of Paper Spinner
+        track_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                track_selected = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Set a listener for the Number of Paper Spinner
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -502,7 +519,7 @@ public class Pop_up_add_event extends AppCompatActivity {
                 String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 // Set the formatted date in the TextView
                 addDate.setText(formattedDate);
-                addDate.setTextColor(getResources().getColor(R.color.text));
+//                addDate.setTextColor(getResources().getColor(R.color.text));
             }
         };
 

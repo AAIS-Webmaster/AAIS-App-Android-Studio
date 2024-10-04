@@ -16,7 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-public class MainActivity extends AppCompatActivity {
+public class Google_Sign_In_Page extends AppCompatActivity {
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
     Button googleBtn;
@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         if (getSupportActionBar() != null) {
@@ -34,22 +33,19 @@ public class MainActivity extends AppCompatActivity {
         googleBtn = findViewById(R.id.google_id);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
-//
-//        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-//        dbRef.child("ki").setValue("value");
+        gsc = GoogleSignIn.getClient(this, gso);
 
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signin();
+                signIn();
             }
         });
     }
 
-    void signin(){
-        Intent signinIntent = gsc.getSignInIntent();
-        startActivityForResult(signinIntent,1000);
+    void signIn(){
+        Intent signInIntent = gsc.getSignInIntent();
+        startActivityForResult(signInIntent,1000);
     }
 
     @Override
@@ -69,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     void navigateToSecondActivity(){
         finish();
-            Intent intent = new Intent(MainActivity.this, Home.class);
+        Intent intent = new Intent(Google_Sign_In_Page.this, Home.class);
         startActivity(intent);
     }
 }

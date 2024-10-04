@@ -91,10 +91,10 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         monthYearText = findViewById(R.id.monthYearTV);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct!=null){
+        if (acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
 
@@ -129,6 +129,13 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         });
 
         notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomePage.this, Announcement_Page.class));
+            }
+        });
+
+        unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomePage.this, Announcement_Page.class));
@@ -204,10 +211,11 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                 if (events != null) {
                     // Filter events to match the time of the current HourEvent
                     for (Event event : events) {
+                        String track = event.getTrack();
                         String name = event.getName();
                         String time = event.getStart_time().toString()
                                 + " - " + event.getEnd_time().toString();
-                        generalLocations.add(new GeneralHelperClass(name, time));
+                        generalLocations.add(new GeneralHelperClass(track, name, time));
                         adapter = new GeneralAdapter(generalLocations, listener);
                         generalRecycler.setAdapter(adapter);
                     }
@@ -239,11 +247,11 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
 //            generalRecycler.setAdapter(adapter);
 //        }
 
-        generalLocations.add(new GeneralHelperClass("Information Technology Conference", "4:00 - 6:00"));
-        generalLocations.add(new GeneralHelperClass("Health Conference", "5:00 - 7:00"));
-        generalLocations.add(new GeneralHelperClass("Research Conference", "6:00 - 8:00"));
-        adapter = new GeneralAdapter(generalLocations, listener);
-        generalRecycler.setAdapter(adapter);
+//        generalLocations.add(new GeneralHelperClass("Information Technology Conference", "4:00 - 6:00"));
+//        generalLocations.add(new GeneralHelperClass("Health Conference", "5:00 - 7:00"));
+//        generalLocations.add(new GeneralHelperClass("Research Conference", "6:00 - 8:00"));
+//        adapter = new GeneralAdapter(generalLocations, listener);
+//        generalRecycler.setAdapter(adapter);
     }
 
 //    private void setOnClickListener() {
@@ -317,7 +325,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(HomePage.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(HomePage.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -331,7 +339,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(HomePage.this, MainActivity.class));
+                    startActivity(new Intent(HomePage.this, Google_Sign_In_Page.class));
                 }
             });
         }
@@ -355,15 +363,15 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-        setEventAdapter();
+//        setEventAdapter();
     }
 
-    private void setEventAdapter()
-    {
-        ArrayList<Event> dailyEvents = Event.eventsForDate(CalendarUtils.selectedDate);
-        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), dailyEvents);
-//         eventListView.setAdapter(eventAdapter); // Uncomment if you have an event list view
-    }
+//    private void setEventAdapter()
+//    {
+//        ArrayList<Event> dailyEvents = Event.eventsForDate(CalendarUtils.selectedDate);
+////        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), dailyEvents);
+////         eventListView.setAdapter(eventAdapter); // Uncomment if you have an event list view
+//    }
 
     @Override
     public void onItemClick(int position, LocalDate date) {
@@ -399,13 +407,11 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
 
                         if (date.equals(current_date)) {
                             event_present = true;
-                            generalLocations.add(new GeneralHelperClass(event.getName(), time));
+                            generalLocations.add(new GeneralHelperClass("Track: " + event.getTrack(), event.getName(), time));
                         }
                     }
 
                     if (event_present) {
-//                        adapter = new GeneralAdapter(generalLocations, listener);
-//                        generalRecycler.setAdapter(adapter);
                         error.setVisibility(View.GONE);
                     } else {
                         error.setVisibility(View.VISIBLE);
@@ -425,17 +431,5 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                 Toast.makeText(HomePage.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-//        if (generalLocations.isEmpty()){
-//            error.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            error.setVisibility(View.GONE);
-//        }
-
-//        generalLocations.add(new GeneralHelperClass("Research Conference", "6:00 - 8:00"));
-//        adapter = new GeneralAdapter(generalLocations, listener);
-//        generalRecycler.setAdapter(adapter);
     }
 }

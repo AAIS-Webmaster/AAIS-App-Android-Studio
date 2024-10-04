@@ -65,10 +65,10 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
         }
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if(acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
         }
@@ -141,6 +141,13 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
         navigationDrawer();
 
         notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Organising_Committee.this, Announcement_Page.class));
+            }
+        });
+
+        unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Organising_Committee.this, Announcement_Page.class));
@@ -292,7 +299,7 @@ public class Organising_Committee extends AppCompatActivity implements Navigatio
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Organising_Committee.this, MainActivity.class));
+                    startActivity(new Intent(Organising_Committee.this, Google_Sign_In_Page.class));
                 }
             });
         }

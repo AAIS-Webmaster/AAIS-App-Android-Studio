@@ -37,6 +37,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
         GeneralHelperClass generalHelperClass = generalLocations.get(position);
 
         holder.event_name.setText(generalHelperClass.getEvent_name());
+        holder.track.setText(generalHelperClass.getTrack());
         holder.time.setText(generalHelperClass.getTime());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +68,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
     }
 
     public static class GeneralViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView event_name, time;
+        TextView track, event_name, time;
         ImageButton info;
         RecyclerViewClickListener listener;
 
@@ -75,6 +76,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
             super(itemView);
 
             //Hooks
+            track = itemView.findViewById(R.id.track);
             event_name = itemView.findViewById(R.id.event_name);
             time = itemView.findViewById(R.id.time);
             info = itemView.findViewById(R.id.event_info);

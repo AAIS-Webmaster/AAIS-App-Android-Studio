@@ -112,6 +112,13 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
             }
         });
 
+        unseen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(About_Page.this, Announcement_Page.class));
+            }
+        });
+
         navigationDrawer();
     }
 
@@ -175,7 +182,7 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(About_Page.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(About_Page.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -186,7 +193,7 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(About_Page.this, MainActivity.class));
+                    startActivity(new Intent(About_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

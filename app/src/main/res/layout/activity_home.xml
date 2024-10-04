@@ -305,7 +305,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Upcoming Conferences"
+                                android:text="Upcoming Sessions"
                                 android:textAllCaps="true"
                                 android:textSize="20sp"
                                 android:fontFamily="sans-serif-black"

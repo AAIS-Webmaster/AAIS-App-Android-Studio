@@ -56,7 +56,7 @@ import java.util.List;
 public class Event_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int REQUEST_CODE = 1001;
-    String personName, personEmail, title, event_address, event_location,
+    String personName, personEmail, title, event_address, selected_track, event_location,
             text_chair, paper1_name, paper2_name, paper3_name, paper4_name = "";
     LocalDate event_date;
     boolean eventExists;
@@ -70,7 +70,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
     LinearLayout contentView;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
-    TextView event_name, date, time, location, address, chair, paper1, paper2, paper3, paper4;
+    TextView event_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4;
     Uri paper1_uri, paper2_uri, paper3_uri, paper4_uri;
     LinearLayout layout2, layout3, layout4;
     private MyDatabaseHelper dbHelper;
@@ -102,6 +102,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         String name = "User";
 
         event_name = findViewById(R.id.event_name);
+        track = findViewById(R.id.track);
         date = findViewById(R.id.date);
         time = findViewById(R.id.time);
         location = findViewById(R.id.location);
@@ -131,10 +132,10 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         layout4 = findViewById(R.id.layout4);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if(acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
 
@@ -189,21 +190,25 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                         intent.putExtra(CalendarContract.Events.TITLE, title);
                         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event_location);
                         if (paper2_isPresent && paper3_isPresent && paper4_isPresent) {
-                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
+                                    + "Session Chair: " + text_chair + "\n"
                                     + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name + "\n 3. "
                                     + paper3_name + "\n 4. " + paper4_name);
                         } else if (paper2_isPresent && paper3_isPresent) {
-                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
+                                    + "Session Chair: " + text_chair + "\n"
                                     + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. "
                                     + paper2_name + "\n 3. " + paper3_name);
                         } else if (paper2_isPresent) {
-                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
+                                    + "Session Chair: " + text_chair + "\n"
                                     + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name);
                         } else {
-                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Session Chair: " + text_chair + "\n"
+                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
+                                    + "Session Chair: " + text_chair + "\n"
                                     + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name);
                         }
@@ -237,6 +242,13 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
             }
         });
 
+        unseen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Event_Page.this, Announcement_Page.class));
+            }
+        });
+
         Bundle extra = getIntent().getExtras();
 
         if (extra != null){
@@ -253,6 +265,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
 
                             if (eventName.equals(finalName)){
                                 title = finalName;
+                                selected_track = event.getTrack();
                                 event_address = event.getAddress();
                                 event_location = event.getLocation();
                                 event_date = event.getDate();
@@ -318,6 +331,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                                 start_time = startMillis;
                                 end_time = endMillis;
                                 event_name.setText(title);
+                                track.setText(selected_track);
                                 date.setText(formattedDate);
                                 time.setText(start_hour + ":" + start_min + "0 - " + end_hour + ":" + end_min + "0");
                                 location.setText(event_location);
@@ -649,7 +663,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(Event_Page.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(Event_Page.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -663,7 +677,7 @@ public class Event_Page extends AppCompatActivity implements NavigationView.OnNa
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Event_Page.this, MainActivity.class));
+                    startActivity(new Intent(Event_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

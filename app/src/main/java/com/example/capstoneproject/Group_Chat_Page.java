@@ -132,6 +132,13 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
             }
         });
 
+        unseen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Group_Chat_Page.this, Announcement_Page.class));
+            }
+        });
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,7 +268,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(Group_Chat_Page.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(Group_Chat_Page.this, Organising_Committee.class));
         }
         if(item.toString().equals("About")){
@@ -272,7 +279,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Group_Chat_Page.this, MainActivity.class));
+                    startActivity(new Intent(Group_Chat_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

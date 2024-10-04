@@ -7,4 +7,25 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+
+    <string-array name="tracks_spinner">
+        <item>General Track</item>
+        <item>Emerging Technologies in IS</item>
+        <item>Strategy, Governance, and Leadership</item>
+        <item>Digital Innovation, Transformation, Business Models and Future of Work</item>
+        <item>Information Security Management, Privacy, Ethics and the Dark Side of Information Systems</item>
+        <item>Data Analytics, Artificial Intelligence, and Strategic Decision Making</item>
+        <item>Digital Health Care</item>
+        <item>Information Systems Education in a Disruptive World</item>
+        <item>Crowds, Social Media, Digital Collaboration, and Fake News</item>
+        <item>Digital Innovation for the Common Good</item>
+        <item>Digital Government and Sustainable Technology</item>
+        <item>Digital Ecosystems and Technologies Evolving in the Fast Changing Ecological World</item>
+        <item>Digital Inequality and its Implication to Society and the Community</item>
+        <item>IS Research in Marginalized and Indigenous Contexts</item>
+        <item>Decolonizing Information Systems Research</item>
+        <item>The Role of Open Source in the Digital Future (Sponsored)</item>
+        <item>Poster SLAM</item>
+    </string-array>
+
 </resources>

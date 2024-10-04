@@ -108,7 +108,7 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
         gsc = GoogleSignIn.getClient(this,gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if(acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
         }
@@ -164,6 +164,13 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
 //        });
 
         notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(QR_check_in.this, Announcement_Page.class));
+            }
+        });
+
+        unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(QR_check_in.this, Announcement_Page.class));
@@ -293,7 +300,7 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
         if(item.toString().equals("Site Map")){
             startActivity(new Intent(QR_check_in.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(QR_check_in.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -307,7 +314,7 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(QR_check_in.this, MainActivity.class));
+                    startActivity(new Intent(QR_check_in.this, Google_Sign_In_Page.class));
                 }
             });
         }

@@ -24,7 +24,7 @@ public class MyDatabaseHelper {
 
     public MyDatabaseHelper() {
         // Initialize the Firebase Database reference
-        dbRef = FirebaseDatabase.getInstance("https://capstone-project-432506-default-rtdb.firebaseio.com/")
+        dbRef = FirebaseDatabase.getInstance("https://capstone2024uc-e385c-default-rtdb.firebaseio.com/")
                 .getReference();
     }
 
@@ -158,23 +158,21 @@ public class MyDatabaseHelper {
 //    }
 
     public void sendEvents(List<Event> events) {
-        // Replace '.' in email with ',' since Firebase keys can't contain '.'
-//        String sanitizedEmail = email.replace(".", ",");
-
-        // Reference to the "events" node under the specified email
-        DatabaseReference emailRef = dbRef.child("Events");
+        // Reference to the "Session" node under the specified email
+        DatabaseReference emailRef = dbRef.child("Session");
 
         for (Event event : events) {
             DatabaseReference eventRef = emailRef.push(); // Create a new entry
 
             // Set event details
+            eventRef.child("track").setValue(event.getTrack());
             eventRef.child("name").setValue(event.getName());
             eventRef.child("date").setValue(event.getDate().toString());
             eventRef.child("startTime").setValue(event.getStart_time().toString());
             eventRef.child("endTime").setValue(event.getEnd_time().toString());
             eventRef.child("location").setValue(event.getLocation());
             eventRef.child("address").setValue(event.getAddress());
-            eventRef.child("description").setValue(event.getChair());
+            eventRef.child("sessionChair").setValue(event.getChair());
             eventRef.child("paper1_name").setValue(event.getPaper1_name());
             eventRef.child("paper1_url").setValue(event.getPaper1_url());
             eventRef.child("paper2_name").setValue(event.getPaper2_name());
@@ -189,8 +187,8 @@ public class MyDatabaseHelper {
 
     // Fetch events method
     public void getEvents(EventsRetrievalCallback callback) {
-        // Reference to the "Events" node
-        DatabaseReference emailRef = dbRef.child("Events");
+        // Reference to the "Session" node
+        DatabaseReference emailRef = dbRef.child("Session");
 
         emailRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -199,13 +197,14 @@ public class MyDatabaseHelper {
                     List<Event> events = new ArrayList<>();
                     for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
                         // Fetch event details from snapshot
+                        String track = eventSnapshot.child("track").getValue(String.class);
                         String name = eventSnapshot.child("name").getValue(String.class);
                         String dateStr = eventSnapshot.child("date").getValue(String.class);
                         String startTime = eventSnapshot.child("startTime").getValue(String.class);
                         String endTime = eventSnapshot.child("endTime").getValue(String.class);
                         String location = eventSnapshot.child("location").getValue(String.class);
                         String address = eventSnapshot.child("address").getValue(String.class);
-                        String description = eventSnapshot.child("description").getValue(String.class);
+                        String description = eventSnapshot.child("sessionChair").getValue(String.class);
                         String paper1_name = eventSnapshot.child("paper1_name").getValue(String.class);
                         String paper1_url = eventSnapshot.child("paper1_url").getValue(String.class);
                         String paper2_name = eventSnapshot.child("paper2_name").getValue(String.class);
@@ -256,7 +255,7 @@ public class MyDatabaseHelper {
                         // Ensure all required fields are present before creating an Event object
                         if (date != null && start_time != null && end_time != null) {
                             // Create Event object and add to list
-                            Event event = new Event(name, date, start_time, end_time, location, address, description,
+                            Event event = new Event(track, name, date, start_time, end_time, location, address, description,
                                     paper1_name, paper1_url, paper2_name, paper2_url, paper3_name, paper3_url, paper4_name, paper4_url);
                             events.add(event);
                         }
@@ -275,8 +274,8 @@ public class MyDatabaseHelper {
     }
 
     public void deleteEvent(String eventName, String eventDate, String startTime, String endTime, String sessionChair) {
-        // Reference to the "Events" node
-        DatabaseReference eventsRef = dbRef.child("Events");
+        // Reference to the "Session" node
+        DatabaseReference eventsRef = dbRef.child("Session");
 
         // Query to find the event with matching details
         eventsRef.orderByChild("name").equalTo(eventName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -289,7 +288,7 @@ public class MyDatabaseHelper {
                     String dbDate = eventSnapshot.child("date").getValue(String.class);
                     String dbStartTime = eventSnapshot.child("startTime").getValue(String.class);
                     String dbEndTime = eventSnapshot.child("endTime").getValue(String.class);
-                    String dbChair = eventSnapshot.child("description").getValue(String.class);  // "description" as session chair
+                    String dbChair = eventSnapshot.child("sessionChair").getValue(String.class);  // "description" as session chair
 
                     // Match all fields (name, date, startTime, endTime, chair)
                     if (dbDate.equals(eventDate) && dbStartTime.equals(startTime) && dbEndTime.equals(endTime) && dbChair.equals(sessionChair)) {

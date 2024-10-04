@@ -62,7 +62,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         gsc = GoogleSignIn.getClient(this,gso);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
+        if(acct != null){
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
         }
@@ -93,7 +93,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         String imageUrl = "https://www.canberra.edu.au/__data/assets/image/0009/1613709/UCEM0093_UCMapsUpdate2020_Main_201207.png";
         Picasso.get()
                 .load(imageUrl)
-                .error(R.drawable.baseline_error_24) // Optional: error image if loading fails
+                .error(R.drawable.baseline_error_24) // Error image if loading fails
                 .into(map);
 
         map.setOnClickListener(new View.OnClickListener() {
@@ -115,10 +115,17 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
             }
         });
 
+        unseen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Site_Map_Page.this, Announcement_Page.class));
+            }
+        });
+
         navigationDrawer();
     }
 
-    //Navigation Drawer Functions
+    // Navigation Drawer Functions
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerVisible(GravityCompat.START)){
@@ -175,7 +182,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         if(item.toString().equals("QR Check-In")){
             startActivity(new Intent(Site_Map_Page.this, QR_check_in.class));
         }
-        if(item.toString().equals("Organising Committee")){
+        if(item.toString().equals("Committee")){
             startActivity(new Intent(Site_Map_Page.this, Organising_Committee.class));
         }
         if(item.toString().equals("Chat")){
@@ -189,7 +196,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     finish();
-                    startActivity(new Intent(Site_Map_Page.this, MainActivity.class));
+                    startActivity(new Intent(Site_Map_Page.this, Google_Sign_In_Page.class));
                 }
             });
         }

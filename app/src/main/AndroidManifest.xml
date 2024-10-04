@@ -37,21 +37,6 @@
             android:name=".Pop_up_add_event"
             android:exported="false" />
         <activity
-            android:name=".Google_Calendar"
-            android:exported="false" />
-        <activity
-            android:name=".DailyCalendarActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EventEditActivity"
-            android:exported="false" />
-        <activity
-            android:name=".WeekViewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Calendar_Page"
-            android:exported="false" />
-        <activity
             android:name=".Event_Page"
             android:exported="false" />
         <activity
@@ -67,7 +52,7 @@
             android:name=".Home"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Google_Sign_In_Page"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
