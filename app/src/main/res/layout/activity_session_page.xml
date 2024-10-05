@@ -101,7 +101,7 @@
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/addEvent"
+                android:id="@+id/addSession"
                 app:elevation="20dp"
                 android:visibility="gone"
                 android:layout_gravity="bottom|end"
@@ -262,7 +262,7 @@
                                 android:textColor="@color/text"
                                 android:textSize="20dp"
                                 android:fontFamily="sans-serif-condensed"
-                                android:text="No Event Available"/>
+                                android:text="No Session Available"/>
                         </LinearLayout>
                     </LinearLayout>
                 </ScrollView>

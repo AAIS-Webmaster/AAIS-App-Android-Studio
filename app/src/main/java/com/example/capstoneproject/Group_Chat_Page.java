@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.BuildConfig;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -68,7 +69,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
             getSupportActionBar().hide();
         }
 
-        // Initialize views
+        // Hooks
         firstRecycler = findViewById(R.id.first_recycle);
         message = findViewById(R.id.message);
         send = findViewById(R.id.send);

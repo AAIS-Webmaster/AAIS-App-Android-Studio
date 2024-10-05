@@ -423,6 +423,7 @@
                             android:layout_height="match_parent"
                             android:padding="10dp"
                             android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
                             android:orientation="horizontal"
                             android:background="@color/card_background">
 

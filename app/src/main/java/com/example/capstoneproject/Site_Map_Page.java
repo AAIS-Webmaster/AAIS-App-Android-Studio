@@ -49,7 +49,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
             getSupportActionBar().hide();
         }
 
-        //Menu Hooks
+        // Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         contentView = findViewById(R.id.content);

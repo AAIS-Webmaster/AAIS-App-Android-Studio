@@ -1,11 +1,11 @@
 package com.example.capstoneproject;
 
 public class SessionHelperClass {
-    String track, event_name, time;
+    String track, session_name, time;
 
-    public SessionHelperClass(String track, String event_name, String time) {
+    public SessionHelperClass(String track, String session_name, String time) {
         this.track = track;
-        this.event_name = event_name;
+        this.session_name = session_name;
         this.time = time;
     }
 
@@ -13,8 +13,8 @@ public class SessionHelperClass {
         return track;
     }
 
-    public String getEvent_name() {
-        return event_name;
+    public String getSession_name() {
+        return session_name;
     }
 
     public String getTime() {

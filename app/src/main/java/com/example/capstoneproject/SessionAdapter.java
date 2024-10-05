@@ -35,7 +35,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
     public void onBindViewHolder(@NonNull SessionViewHolder holder, @SuppressLint("RecyclerView") int position) {
         SessionHelperClass sessionHelperClass = sessions.get(position);
 
-        holder.event_name.setText(sessionHelperClass.getEvent_name());
+        holder.session_name.setText(sessionHelperClass.getSession_name());
         holder.track.setText(sessionHelperClass.getTrack());
         holder.time.setText(sessionHelperClass.getTime());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +43,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, Session_Details_Page.class);
-                intent.putExtra("event_name", sessions.get(position).event_name);
+                intent.putExtra("session_name", sessions.get(position).session_name);
                 context.startActivity(intent);
             }
         });
@@ -53,7 +53,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, Session_Details_Page.class);
-                intent.putExtra("event_name", sessions.get(position).event_name);
+                intent.putExtra("session_name", sessions.get(position).session_name);
                 context.startActivity(intent);
             }
         });
@@ -65,7 +65,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
     }
 
     public static class SessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView track, event_name, time;
+        TextView track, session_name, time;
         ImageButton info;
         RecyclerViewClickListener listener;
 
@@ -74,9 +74,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
 
             // Hooks
             track = itemView.findViewById(R.id.track);
-            event_name = itemView.findViewById(R.id.event_name);
+            session_name = itemView.findViewById(R.id.session_name);
             time = itemView.findViewById(R.id.time);
-            info = itemView.findViewById(R.id.event_info);
+            info = itemView.findViewById(R.id.session_info);
 
             this.listener = listener;
             info.setOnClickListener(this);

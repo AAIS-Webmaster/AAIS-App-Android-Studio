@@ -1,6 +1,5 @@
 package com.example.capstoneproject;
 
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,8 +9,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,9 +25,9 @@ public class MyDatabaseHelper {
                 .getReference();
     }
 
-    // Callback interface for events retrieval
-    public interface EventsRetrievalCallback {
-        void onEventsRetrieved(List<Event> events);
+    // Callback interface for sessions retrieval
+    public interface SessionsRetrievalCallback {
+        void onEventsRetrieved(List<Session> sessions);
         void onError(Exception e);
     }
 
@@ -45,15 +42,9 @@ public class MyDatabaseHelper {
         void onError(Exception e);
     }
 
-//    public void addConversationsListener(ValueEventListener listener) {
-//        DatabaseReference conversationsRef = dbRef.child("General");
-//        conversationsRef.addValueEventListener(listener);
-//    }
-
     // Insert data method with category, key, and value under the email
     public void insertData(String category, List<Announcement> announcements) {
-        // Reference to the "Announcements" node in Firebase
-//        String sanitizedEmail = email.replace(".", ",");
+        // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child(category);
 
         for (Announcement announcement : announcements) {
@@ -68,7 +59,7 @@ public class MyDatabaseHelper {
 
     // Retrieve all keys and values under a specific email and category with a callback
     public void getData(String category, DataRetrievalCallback callback) {
-        // Reference to the "Announcements" node in Firebase
+        // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child(category);
 
         announcementsRef.addValueEventListener(new ValueEventListener() {
@@ -102,7 +93,7 @@ public class MyDatabaseHelper {
     }
 
     public void deleteAnnouncement(String title, String description, String dateTime) {
-        // Reference to the "Announcements" node in Firebase
+        // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child("Announcement");
 
         // Query to find the announcement with matching title, description, and dateTime
@@ -138,81 +129,62 @@ public class MyDatabaseHelper {
         });
     }
 
-//    public void insertData(String email, String category, String key, String value, LocalDateTime dateTime) {
-//        // Replace '.' in email with ',' since Firebase keys can't contain '.'
-//        String sanitizedEmail = email.replace(".", ",");
-//
-//        // Reference to the category under the email
-//        DatabaseReference categoryRef = dbRef.child(sanitizedEmail).child(category).child(key);
-//
-//        // Add the key-value pair under the category
-//        categoryRef.setValue(value)
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        System.out.println("Data inserted successfully.");
-//                    } else {
-//                        System.out.println("Failed to insert data: " + task.getException().getMessage());
-//                    }
-//                });
-//        categoryRef.setValue(dateTime);
-//    }
-
-    public void sendEvents(List<Event> events) {
+    public void sendSession(List<Session> sessions) {
         // Reference to the "Session" node under the specified email
         DatabaseReference emailRef = dbRef.child("Session");
 
-        for (Event event : events) {
-            DatabaseReference eventRef = emailRef.push(); // Create a new entry
+        for (Session session : sessions) {
+            DatabaseReference sessionRef = emailRef.push(); // Create a new entry
 
-            // Set event details
-            eventRef.child("track").setValue(event.getTrack());
-            eventRef.child("name").setValue(event.getName());
-            eventRef.child("date").setValue(event.getDate().toString());
-            eventRef.child("startTime").setValue(event.getStart_time().toString());
-            eventRef.child("endTime").setValue(event.getEnd_time().toString());
-            eventRef.child("location").setValue(event.getLocation());
-            eventRef.child("address").setValue(event.getAddress());
-            eventRef.child("sessionChair").setValue(event.getChair());
-            eventRef.child("paper1_name").setValue(event.getPaper1_name());
-            eventRef.child("paper1_url").setValue(event.getPaper1_url());
-            eventRef.child("paper2_name").setValue(event.getPaper2_name());
-            eventRef.child("paper2_url").setValue(event.getPaper2_url());
-            eventRef.child("paper3_name").setValue(event.getPaper3_name());
-            eventRef.child("paper3_url").setValue(event.getPaper3_url());
-            eventRef.child("paper4_name").setValue(event.getPaper4_name());
-            eventRef.child("paper4_url").setValue(event.getPaper4_url());
+            // Set session details
+            sessionRef.child("track").setValue(session.getTrack());
+            sessionRef.child("name").setValue(session.getName());
+            sessionRef.child("date").setValue(session.getDate().toString());
+            sessionRef.child("startTime").setValue(session.getStart_time().toString());
+            sessionRef.child("endTime").setValue(session.getEnd_time().toString());
+            sessionRef.child("location").setValue(session.getLocation());
+            sessionRef.child("address").setValue(session.getAddress());
+            sessionRef.child("sessionChair").setValue(session.getChair());
+            sessionRef.child("paper1_name").setValue(session.getPaper1_name());
+            sessionRef.child("paper1_url").setValue(session.getPaper1_url());
+            sessionRef.child("paper2_name").setValue(session.getPaper2_name());
+            sessionRef.child("paper2_url").setValue(session.getPaper2_url());
+            sessionRef.child("paper3_name").setValue(session.getPaper3_name());
+            sessionRef.child("paper3_url").setValue(session.getPaper3_url());
+            sessionRef.child("paper4_name").setValue(session.getPaper4_name());
+            sessionRef.child("paper4_url").setValue(session.getPaper4_url());
 
         }
     }
 
-    // Fetch events method
-    public void getEvents(EventsRetrievalCallback callback) {
+    // Fetch sessions method
+    public void getSessions(SessionsRetrievalCallback callback) {
         // Reference to the "Session" node
         DatabaseReference emailRef = dbRef.child("Session");
 
         emailRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    List<Event> events = new ArrayList<>();
-                    for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                        // Fetch event details from snapshot
-                        String track = eventSnapshot.child("track").getValue(String.class);
-                        String name = eventSnapshot.child("name").getValue(String.class);
-                        String dateStr = eventSnapshot.child("date").getValue(String.class);
-                        String startTime = eventSnapshot.child("startTime").getValue(String.class);
-                        String endTime = eventSnapshot.child("endTime").getValue(String.class);
-                        String location = eventSnapshot.child("location").getValue(String.class);
-                        String address = eventSnapshot.child("address").getValue(String.class);
-                        String description = eventSnapshot.child("sessionChair").getValue(String.class);
-                        String paper1_name = eventSnapshot.child("paper1_name").getValue(String.class);
-                        String paper1_url = eventSnapshot.child("paper1_url").getValue(String.class);
-                        String paper2_name = eventSnapshot.child("paper2_name").getValue(String.class);
-                        String paper2_url = eventSnapshot.child("paper2_url").getValue(String.class);
-                        String paper3_name = eventSnapshot.child("paper3_name").getValue(String.class);
-                        String paper3_url = eventSnapshot.child("paper3_url").getValue(String.class);
-                        String paper4_name = eventSnapshot.child("paper4_name").getValue(String.class);
-                        String paper4_url = eventSnapshot.child("paper4_url").getValue(String.class);
+                    List<Session> sessions = new ArrayList<>();
+                    for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                        // Fetch session details from snapshot
+                        String track = sessionSnapshot.child("track").getValue(String.class);
+                        String name = sessionSnapshot.child("name").getValue(String.class);
+                        String dateStr = sessionSnapshot.child("date").getValue(String.class);
+                        String startTime = sessionSnapshot.child("startTime").getValue(String.class);
+                        String endTime = sessionSnapshot.child("endTime").getValue(String.class);
+                        String location = sessionSnapshot.child("location").getValue(String.class);
+                        String address = sessionSnapshot.child("address").getValue(String.class);
+                        String description = sessionSnapshot.child("sessionChair").getValue(String.class);
+                        String paper1_name = sessionSnapshot.child("paper1_name").getValue(String.class);
+                        String paper1_url = sessionSnapshot.child("paper1_url").getValue(String.class);
+                        String paper2_name = sessionSnapshot.child("paper2_name").getValue(String.class);
+                        String paper2_url = sessionSnapshot.child("paper2_url").getValue(String.class);
+                        String paper3_name = sessionSnapshot.child("paper3_name").getValue(String.class);
+                        String paper3_url = sessionSnapshot.child("paper3_url").getValue(String.class);
+                        String paper4_name = sessionSnapshot.child("paper4_name").getValue(String.class);
+                        String paper4_url = sessionSnapshot.child("paper4_url").getValue(String.class);
 
                         // Initialize LocalDate and LocalTime variables
                         LocalDate date = null;
@@ -224,9 +196,9 @@ public class MyDatabaseHelper {
                             try {
                                 date = LocalDate.parse(dateStr);
                             } catch (DateTimeParseException e) {
-                                // Handle parsing error, log, or skip the event
+                                // Handle parsing error, log, or skip the session
                                 e.printStackTrace();
-                                continue; // Skip this event if the date format is invalid
+                                continue; // Skip this session if the date format is invalid
                             }
                         }
 
@@ -235,9 +207,9 @@ public class MyDatabaseHelper {
                             try {
                                 start_time = LocalTime.parse(startTime);
                             } catch (DateTimeParseException e) {
-                                // Handle parsing error, log, or skip the event
+                                // Handle parsing error, log, or skip the session
                                 e.printStackTrace();
-                                continue; // Skip this event if the start time format is invalid
+                                continue; // Skip this session if the start time format is invalid
                             }
                         }
 
@@ -246,68 +218,68 @@ public class MyDatabaseHelper {
                             try {
                                 end_time = LocalTime.parse(endTime);
                             } catch (DateTimeParseException e) {
-                                // Handle parsing error, log, or skip the event
+                                // Handle parsing error, log, or skip the session
                                 e.printStackTrace();
-                                continue; // Skip this event if the end time format is invalid
+                                continue; // Skip this session if the end time format is invalid
                             }
                         }
 
-                        // Ensure all required fields are present before creating an Event object
+                        // Ensure all required fields are present before creating an Session object
                         if (date != null && start_time != null && end_time != null) {
-                            // Create Event object and add to list
-                            Event event = new Event(track, name, date, start_time, end_time, location, address, description,
+                            // Create Session object and add to list
+                            Session session = new Session(track, name, date, start_time, end_time, location, address, description,
                                     paper1_name, paper1_url, paper2_name, paper2_url, paper3_name, paper3_url, paper4_name, paper4_url);
-                            events.add(event);
+                            sessions.add(session);
                         }
                     }
-                    callback.onEventsRetrieved(events); // Pass events to callback
+                    callback.onEventsRetrieved(sessions); // Pass sessions to callback
                 } else {
                     callback.onEventsRetrieved(new ArrayList<>()); // No data found
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 callback.onError(databaseError.toException());
             }
         });
     }
 
-    public void deleteEvent(String eventName, String eventDate, String startTime, String endTime, String sessionChair) {
+    public void deleteSession(String sessionName, String sessionDate, String startTime, String endTime, String sessionChair) {
         // Reference to the "Session" node
-        DatabaseReference eventsRef = dbRef.child("Session");
+        DatabaseReference sessionsRef = dbRef.child("Session");
 
-        // Query to find the event with matching details
-        eventsRef.orderByChild("name").equalTo(eventName).addListenerForSingleValueEvent(new ValueEventListener() {
+        // Query to find the session with matching details
+        sessionsRef.orderByChild("name").equalTo(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean eventDeleted = false;
+                boolean sessionDeleted = false;
 
-                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                    // Retrieve fields from the event to match with the input
-                    String dbDate = eventSnapshot.child("date").getValue(String.class);
-                    String dbStartTime = eventSnapshot.child("startTime").getValue(String.class);
-                    String dbEndTime = eventSnapshot.child("endTime").getValue(String.class);
-                    String dbChair = eventSnapshot.child("sessionChair").getValue(String.class);  // "description" as session chair
+                for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                    // Retrieve fields from the session to match with the input
+                    String dbDate = sessionSnapshot.child("date").getValue(String.class);
+                    String dbStartTime = sessionSnapshot.child("startTime").getValue(String.class);
+                    String dbEndTime = sessionSnapshot.child("endTime").getValue(String.class);
+                    String dbChair = sessionSnapshot.child("sessionChair").getValue(String.class);  // "description" as session chair
 
                     // Match all fields (name, date, startTime, endTime, chair)
-                    if (dbDate.equals(eventDate) && dbStartTime.equals(startTime) && dbEndTime.equals(endTime) && dbChair.equals(sessionChair)) {
-                        // Delete the matching event
-                        eventSnapshot.getRef().removeValue();
-                        eventDeleted = true;
-                        System.out.println("Event deleted: " + eventSnapshot.getKey());
-                        break;  // Exit loop after deleting the first matching event
+                    if (dbDate.equals(sessionDate) && dbStartTime.equals(startTime) && dbEndTime.equals(endTime) && dbChair.equals(sessionChair)) {
+                        // Delete the matching session
+                        sessionSnapshot.getRef().removeValue();
+                        sessionDeleted = true;
+                        System.out.println("Session deleted: " + sessionSnapshot.getKey());
+                        break;  // Exit loop after deleting the first matching session
                     }
                 }
 
-                if (!eventDeleted) {
-                    System.out.println("No matching event found with the provided details.");
+                if (!sessionDeleted) {
+                    System.out.println("No matching session found with the provided details.");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Failed to delete event: " + databaseError.getMessage());
+                System.out.println("Failed to delete session: " + databaseError.getMessage());
             }
         });
     }
@@ -432,58 +404,15 @@ public class MyDatabaseHelper {
         });
     }
 
-
-    private void uploadImageToFirebase(Uri imageUri, String personEmail, String personName) {
-        // Reference to Firebase storage
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
-        // Create a reference for the image file using the email as the identifier
-        StorageReference imageRef = storageRef.child("profile_images/" + personEmail + ".jpg");
-
-        // Upload image to Firebase Storage
-        imageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    // Retrieve the image URL after upload
-                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
-
-                        saveUserDataWithImageUrl(personEmail, personName, imageUrl);
-//                        // Now save the data including the image URL in Realtime Database
-//                        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users");
-//
-//                        // Push a new user entry under "Users"
-//                        DatabaseReference userRef = dbRef.push(); // Generate a new key for this user
-//
-//                        // Save the user data under the unique key
-//                        userRef.child("personEmail").setValue(personEmail);
-//                        userRef.child("personName").setValue(personName);
-////                        userRef.child("category").setValue(category); // e.g., "Student" or "Presenter"
-//                        userRef.child("url").setValue(imageUrl); // The image URL saved to Firebase Storage
-                    }).addOnFailureListener(e -> {
-                        // Handle the failure of getting the image URL
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    // Handle the failure of image upload
-                });
-    }
-
     public void saveUserDataWithImageUrl(String personEmail, String personName, String imageUrl) {
         String sanitizedEmail = personEmail.replace(".", ",");
         // Reference to the Firebase Realtime Database
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(sanitizedEmail);
 
-        // Push a new user entry under "Users"
-//        DatabaseReference userRef = dbRef.push(); // Generate a new key for this user
-
         // Save the user data under the unique key
         dbRef.child("personEmail").setValue(personEmail);
         dbRef.child("personName").setValue(personName);
-//        userRef.child("category").setValue(category); // e.g., "Student" or "Presenter"
         dbRef.child("url").setValue(imageUrl); // The image URL already available
-
-        // Optionally notify user of success
-//        Toast.makeText(getApplicationContext(), "User data and image URL saved successfully!", Toast.LENGTH_SHORT).show();
     }
 
     public void getUserImageUrl(String email, ImageUrlCallback callback) {

@@ -1,11 +1,8 @@
 package com.example.capstoneproject;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,13 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -54,19 +45,16 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
     static final float END_SCALE = 0.7f;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
-    String personName, personEmail, extractedText1, extractedText2, extractedText3, extractedText4;
-    // Drawer Menu
+    String personName, personEmail;
     DrawerLayout drawerLayout;
     CardView track, check_in, site_map;
     NavigationView navigationView;
     ImageView menuIcon, notification, userIcon;
     LinearLayout contentView;
-    RecyclerView generalRecycler, announcementRecycler;
-    RecyclerView.Adapter adapter, adapter2, adapter3;
-    private Bitmap imageBitmap;
+    RecyclerView sessionRecycler;
+    RecyclerView.Adapter adapter;
     private MyDatabaseHelper dbHelper;
     private SessionAdapter.RecyclerViewClickListener listener;
-    ArrayList<String> pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +74,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         user_icon_text = findViewById(R.id.user_icon_text);
         notification = findViewById(R.id.notification);
         contentView = findViewById(R.id.content);
-//        generalRecycler = findViewById(R.id.general_recycle);
-        announcementRecycler = findViewById(R.id.announcement_recycle);
-//        firstRecycler = findViewById(R.id.first_recycle);
+        sessionRecycler = findViewById(R.id.announcement_recycle);
         user = findViewById(R.id.welcome);
         unseen = findViewById(R.id.unseen);
 
@@ -121,30 +107,6 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                 Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
             }
         }
-
-//        userIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
-//                    startActivity(intent);
-//                } catch (Exception e){
-//                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        user_icon_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/personal-info?gar=WzJd&hl=en_GB&utm_source=OGB&utm_medium=act"));
-//                    startActivity(intent);
-//                } catch (Exception e){
-//                    Toast.makeText(Home.this, "Unable to open the Google Account", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
         
         track.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,13 +157,6 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
             }
         });
 
-//        announcementRecycler.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setOnClickListener();
-//            }
-//        });
-
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,9 +171,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
             }
         });
 
-//        generalRecycler();
-//        firstRecycler();
-        announcementRecycler();
+        sessionRecycler();
 
         // Change color of specific items
 //        Menu menu = navigationView.getMenu();
@@ -229,40 +182,35 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
 //        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.highlighted_item_color)), 0, s.length(), 0);
 //        socialsItem.setTitle(s);
         navigationDrawer();
-
     }
 
-    private void announcementRecycler() {
-//        setOnClickListener();
-        announcementRecycler.setHasFixedSize(true);
-        announcementRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    private void sessionRecycler() {
+        sessionRecycler.setHasFixedSize(true);
+        sessionRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-
-//        pos = new ArrayList<>();
-
-        dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
+        dbHelper.getSessions(new MyDatabaseHelper.SessionsRetrievalCallback() {
             @Override
-            public void onEventsRetrieved(List<Event> events) {
-                if (events != null && !events.isEmpty()) {
+            public void onEventsRetrieved(List<Session> sessions) {
+                if (sessions != null && !sessions.isEmpty()) {
                     ArrayList<HomeSessionHelperClass> announcementLocations = new ArrayList<>();
-                    // Sort events by date, then by start time, and finally by end time
-                    Collections.sort(events, new Comparator<Event>() {
+                    // Sort sessions by date, then by start time, and finally by end time
+                    Collections.sort(sessions, new Comparator<Session>() {
                         @Override
-                        public int compare(Event event1, Event event2) {
+                        public int compare(Session session1, Session session2) {
                             // First compare by date
-                            int dateComparison = event1.getDate().compareTo(event2.getDate());
+                            int dateComparison = session1.getDate().compareTo(session2.getDate());
                             if (dateComparison != 0) {
                                 return dateComparison;
                             }
 
                             // If dates are equal, compare by start time
-                            int startTimeComparison = event1.getStart_time().compareTo(event2.getStart_time());
+                            int startTimeComparison = session1.getStart_time().compareTo(session2.getStart_time());
                             if (startTimeComparison != 0) {
                                 return startTimeComparison;
                             }
 
                             // If start times are equal, compare by end time
-                            return event1.getEnd_time().compareTo(event2.getEnd_time());
+                            return session1.getEnd_time().compareTo(session2.getEnd_time());
                         }
                     });
 
@@ -270,47 +218,47 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                     LocalDate currentDate = LocalDate.now();
                     LocalTime currentTime = LocalTime.now();
 
-                    // Limit the number of events to 4
-                    int eventCount = 0;
+                    // Limit the number of sessions to 4
+                    int sessionCount = 0;
 
-                    // Iterate through the sorted list of events
-                    for (Event event : events) {
-                        if (eventCount >= 4) break; // Stop adding after 4 events
+                    // Iterate through the sorted list of sessions
+                    for (Session session : sessions) {
+                        if (sessionCount >= 4) break; // Stop adding after 4 sessions
 
-                        LocalDate eventDate = event.getDate();
-                        LocalTime eventEndTime = event.getEnd_time();
+                        LocalDate sessionDate = session.getDate();
+                        LocalTime sessionEndTime = session.getEnd_time();
 
-                        // Skip events that are in the past
-                        if (eventDate.isBefore(currentDate)) {
-                            continue; // Skip if the event date is before today
+                        // Skip sessions that are in the past
+                        if (sessionDate.isBefore(currentDate)) {
+                            continue; // Skip if the session date is before today
                         }
 
-                        // If the event is today, check if it has already ended
-                        if (eventDate.isEqual(currentDate) && eventEndTime.isBefore(currentTime)) {
-                            continue; // Skip if the event has already ended today
+                        // If the session is today, check if it has already ended
+                        if (sessionDate.isEqual(currentDate) && sessionEndTime.isBefore(currentTime)) {
+                            continue; // Skip if the session has already ended today
                         }
 
-                        // Now it's a valid future or ongoing event, so add it
-                        String eventName = event.getName();
-                        String track = event.getTrack();
-                        String eventTime = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
+                        // Now it's a valid future or ongoing session, so add it
+                        String sessionName = session.getName();
+                        String track = session.getTrack();
+                        String sessionTime = session.getStart_time().toString() + " - " + session.getEnd_time().toString();
 
                         announcementLocations.add(new HomeSessionHelperClass(
-                                eventName,
-                                "Date: " + event.getDate().toString(),
-                                "Duration: " + eventTime,
+                                sessionName,
+                                "Date: " + session.getDate().toString(),
+                                "Duration: " + sessionTime,
                                 "Track: " + track
                         ));
 
-                        eventCount++;
+                        sessionCount++;
                     }
 
                     // Update RecyclerView with the adapter
-                    adapter3 = new HomeSessionAdapter(announcementLocations, listener);
-                    announcementRecycler.setAdapter(adapter3);
+                    adapter = new HomeSessionAdapter(announcementLocations, listener);
+                    sessionRecycler.setAdapter(adapter);
 
                 } else {
-                    Toast.makeText(Home_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home_Page.this, "No sessions found.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -320,150 +268,6 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                 Toast.makeText(Home_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-//    private void setOnClickListener() {
-//        listener = new GeneralAdapter.RecyclerViewClickListener() {
-//            @Override
-//            public void onClick(View v, int position) {
-////                listener.onClick(v, position);
-//
-//                Intent intent = new Intent(Home.this, Event_Page.class);
-//                intent.putExtra("event_name", pos.get(position));
-////                intent.putExtra("time", time);
-//                startActivity(intent);
-//            }
-//        };
-//    }
-
-    private void generalRecycler() {
-        generalRecycler.setHasFixedSize(true);
-        generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-        ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d("Scrapper", "Connecting to website...");
-                    Document doc = Jsoup.connect("https://acis.aaisnet.org/acis2024/committee/").timeout(6000).get();
-
-                    // Extracting the desired text from the HTML
-                    Element paragraph1 = doc.select("figcaption:contains(Shirley Gregor)").first();
-                    Element paragraph2 = doc.select("figcaption:contains(Craig McDonald)").first();
-                    Element paragraph3 = doc.select("figcaption:contains(Ahmed Imran)").first();
-                    Element paragraph4 = doc.select("figcaption:contains(John James)").first();
-
-                    extractedText1 = paragraph1.text();
-                    extractedText2 = paragraph2.text();
-                    extractedText3 = paragraph3.text();
-                    extractedText4 = paragraph4.text();
-
-                    // Update UI on the main thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Define the target
-                            Target target1 = new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    imageBitmap = bitmap;
-//                                    generalLocations.add(new GeneralHelperClass(imageBitmap, extractedText1));
-//                                    adapter = new GeneralAdapter(generalLocations);
-//                                    generalRecycler.setAdapter(adapter);
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                    // Handle failure
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    // Handle placeholder
-                                }
-                            };
-
-                            Target target2 = new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    imageBitmap = bitmap;
-//                                    generalLocations.add(new GeneralHelperClass(imageBitmap, extractedText2));
-//                                    adapter = new GeneralAdapter(generalLocations);
-//                                    generalRecycler.setAdapter(adapter);
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                    // Handle failure
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    // Handle placeholder
-                                }
-                            };
-
-                            Target target3 = new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    imageBitmap = bitmap;
-//                                    generalLocations.add(new GeneralHelperClass(imageBitmap, extractedText3));
-//                                    adapter = new GeneralAdapter(generalLocations);
-//                                    generalRecycler.setAdapter(adapter);
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                    // Handle failure
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    // Handle placeholder
-                                }
-                            };
-
-                            Target target4 = new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    imageBitmap = bitmap;
-//                                    generalLocations.add(new GeneralHelperClass(imageBitmap, extractedText4));
-//                                    adapter = new GeneralAdapter(generalLocations);
-//                                    generalRecycler.setAdapter(adapter);
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                    // Handle failure
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    // Handle placeholder
-                                }
-                            };
-
-                            // Load the image using Picasso into the target
-                            Picasso.get().load("https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/03/shirley-gregor.png").into(target1);
-                            Picasso.get().load("https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/03/craig-mcdonald.png").into(target2);
-                            Picasso.get().load("https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/03/ahmed-imran.png").into(target3);
-                            Picasso.get().load("https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/06/john-james.jpg").into(target4);
-
-
-
-//
-////                            Picasso.get().load("https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/07/detmar-w-straub.png").into(image);
-//                            generalLocations.add(new GeneralHelperClass(R.drawable.google_logo, extractedText));
-                        }
-                    });
-                } catch (IOException e) {
-                    Log.e("Scrapper", "Error fetching data", e);
-                }
-            }
-        }).start();
-
-
     }
 
     //Navigation Drawer Functions

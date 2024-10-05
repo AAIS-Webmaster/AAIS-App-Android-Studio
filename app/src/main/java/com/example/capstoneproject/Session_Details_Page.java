@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -56,10 +55,10 @@ import java.util.List;
 public class Session_Details_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int REQUEST_CODE = 1001;
-    String personName, personEmail, title, event_address, selected_track, event_location,
+    String personName, personEmail, title, session_address, selected_track, session_location,
             text_chair, paper1_name, paper2_name, paper3_name, paper4_name = "";
-    LocalDate event_date;
-    boolean eventExists;
+    LocalDate session_date;
+    boolean sessionExists;
     boolean paper2_isPresent, paper3_isPresent, paper4_isPresent = false;
     long start_time, end_time;
     DrawerLayout drawerLayout;
@@ -70,24 +69,24 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
     LinearLayout contentView;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
-    TextView event_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4;
+    TextView session_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4;
     Uri paper1_uri, paper2_uri, paper3_uri, paper4_uri;
     LinearLayout layout2, layout3, layout4;
     private MyDatabaseHelper dbHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
-    private Runnable checkEventRunnable;
+    private Runnable checkSessionRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_page);
+        setContentView(R.layout.activity_session_details_page);
         dbHelper = new MyDatabaseHelper();
 
-        checkEventRunnable = new Runnable() {
+        checkSessionRunnable = new Runnable() {
             @Override
             public void run() {
-                eventExists = isEventInCalendar(title, start_time, end_time);
-                if (eventExists) {
+                sessionExists = isSessionInCalendar(title, start_time, end_time);
+                if (sessionExists) {
                     favorite.setImageResource(R.drawable.baseline_favorite_24);
                 }
                 // Re-run the check every 1 second (1000 milliseconds)
@@ -99,9 +98,7 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             getSupportActionBar().hide();
         }
 
-        String name = "User";
-
-        event_name = findViewById(R.id.event_name);
+        session_name = findViewById(R.id.session_name);
         track = findViewById(R.id.track);
         date = findViewById(R.id.date);
         time = findViewById(R.id.time);
@@ -115,7 +112,6 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuIcon = findViewById(R.id.menu_icon);
-//        userIcon = findViewById(R.id.notification);
         contentView = findViewById(R.id.content);
         favorite = findViewById(R.id.favorite);
         delete = findViewById(R.id.delete);
@@ -183,53 +179,50 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                     // If not, request the permissions
                     ActivityCompat.requestPermissions(Session_Details_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                 } else {
-                    if (!eventExists) {
+                    if (!sessionExists) {
                         Intent intent = new Intent(Intent.ACTION_INSERT);
-//                        intent.setPackage("com.google.android.calendar");
                         intent.setData(CalendarContract.Events.CONTENT_URI);
                         intent.putExtra(CalendarContract.Events.TITLE, title);
-                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event_location);
+                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, session_location);
                         if (paper2_isPresent && paper3_isPresent && paper4_isPresent) {
                             intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
                                     + "Session Chair: " + text_chair + "\n"
-                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Address: " + session_address + "\n" + "Location: " + session_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name + "\n 3. "
                                     + paper3_name + "\n 4. " + paper4_name);
                         } else if (paper2_isPresent && paper3_isPresent) {
                             intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
                                     + "Session Chair: " + text_chair + "\n"
-                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Address: " + session_address + "\n" + "Location: " + session_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. "
                                     + paper2_name + "\n 3. " + paper3_name);
                         } else if (paper2_isPresent) {
                             intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
                                     + "Session Chair: " + text_chair + "\n"
-                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Address: " + session_address + "\n" + "Location: " + session_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name + "\n 2. " + paper2_name);
                         } else {
                             intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
                                     + "Session Chair: " + text_chair + "\n"
-                                    + "Address: " + event_address + "\n" + "Location: " + event_location + "\n"
+                                    + "Address: " + session_address + "\n" + "Location: " + session_location + "\n"
                                     + "Paper Details:\n 1. " + paper1_name);
                         }
 
-//                    intent.putExtra(CalendarContract.Events.ALL_DAY, "true");
                         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start_time);
                         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end_time);
-//                    intent.putExtra(Intent.EXTRA_EMAIL, "test@gmail.com, test2@gmial.com");
 
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
-                            eventExists = isEventInCalendar(title, start_time, end_time);
-                            if (eventExists) {
+                            sessionExists = isSessionInCalendar(title, start_time, end_time);
+                            if (sessionExists) {
                                 favorite.setImageResource(R.drawable.baseline_favorite_24);
-                                Toast.makeText(Session_Details_Page.this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Session_Details_Page.this, "Favourite Session!", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Toast.makeText(Session_Details_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        removeEventFromCalendar();
+                        removeSessionFromCalendar();
                     }
                 }
             }
@@ -252,74 +245,68 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         Bundle extra = getIntent().getExtras();
 
         if (extra != null){
-            name = extra.getString("event_name");
-            String finalName = name;
-            dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
+            String finalName = extra.getString("session_name");
+            dbHelper.getSessions(new MyDatabaseHelper.SessionsRetrievalCallback() {
                 @Override
-                public void onEventsRetrieved(List<Event> events) {
-                    if (events != null) {
-                        // Filter events to match the time of the current HourEvent
-                        for (Event event : events) {
-                            String eventName = event.getName();
-//                        Toast.makeText(HomePage.this, current_date.toString() + " " + date.toString(), Toast.LENGTH_SHORT).show();
+                public void onEventsRetrieved(List<Session> sessions) {
+                    if (sessions != null) {
+                        // Filter sessions to match the time of the current HourEvent
+                        for (Session session : sessions) {
+                            String sessionName = session.getName();
 
-                            if (eventName.equals(finalName)){
+                            if (sessionName.equals(finalName)){
                                 title = finalName;
-                                selected_track = event.getTrack();
-                                event_address = event.getAddress();
-                                event_location = event.getLocation();
-                                event_date = event.getDate();
-                                text_chair = event.getChair();
+                                selected_track = session.getTrack();
+                                session_address = session.getAddress();
+                                session_location = session.getLocation();
+                                session_date = session.getDate();
+                                text_chair = session.getChair();
 
-                                if (!event.getPaper1_name().equals("")){
-                                    paper1_name = event.getPaper1_name();
-                                    paper1_uri = Uri.parse(event.getPaper1_url());
+                                if (!session.getPaper1_name().equals("")){
+                                    paper1_name = session.getPaper1_name();
+                                    paper1_uri = Uri.parse(session.getPaper1_url());
                                 }
-                                if (!event.getPaper2_name().equals("")){
+                                if (!session.getPaper2_name().equals("")){
                                     paper2_isPresent = true;
-                                    paper2_name = event.getPaper2_name();
-                                    paper2_uri = Uri.parse(event.getPaper2_url());
+                                    paper2_name = session.getPaper2_name();
+                                    paper2_uri = Uri.parse(session.getPaper2_url());
                                     layout2.setVisibility(View.VISIBLE);
                                 }
-                                if (!event.getPaper3_name().equals("")){
+                                if (!session.getPaper3_name().equals("")){
                                     paper3_isPresent = true;
-                                    paper3_name = event.getPaper3_name();
-                                    paper3_uri = Uri.parse(event.getPaper3_url());
+                                    paper3_name = session.getPaper3_name();
+                                    paper3_uri = Uri.parse(session.getPaper3_url());
                                     layout3.setVisibility(View.VISIBLE);
                                 }
-                                if (!event.getPaper4_name().equals("")){
+                                if (!session.getPaper4_name().equals("")){
                                     paper4_isPresent = true;
-                                    paper4_name = event.getPaper4_name();
-                                    paper4_uri = Uri.parse(event.getPaper4_url());
+                                    paper4_name = session.getPaper4_name();
+                                    paper4_uri = Uri.parse(session.getPaper4_url());
                                     layout4.setVisibility(View.VISIBLE);
                                 }
 
-                                LocalTime startTimeLocal = event.getStart_time();
-                                LocalTime endTimeLocal = event.getEnd_time();
+                                LocalTime startTimeLocal = session.getStart_time();
+                                LocalTime endTimeLocal = session.getEnd_time();
 
                                 // Define the custom format
                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
                                 // Format the date
-                                String formattedDate = event_date.format(formatter).toUpperCase();
+                                String formattedDate = session_date.format(formatter).toUpperCase();
 
                                 // Convert LocalTime and LocalDate to milliseconds since epoch
-                                LocalDateTime startDateTime = LocalDateTime.of(event_date, startTimeLocal);
-                                LocalDateTime endDateTime = LocalDateTime.of(event_date, endTimeLocal);
+                                LocalDateTime startDateTime = LocalDateTime.of(session_date, startTimeLocal);
+                                LocalDateTime endDateTime = LocalDateTime.of(session_date, endTimeLocal);
 
                                 int start_day = startDateTime.getDayOfMonth();
-                                Month start_month = startDateTime.getMonth();
                                 int start_year = startDateTime.getYear();
                                 int start_hour = startDateTime.getHour();
                                 int start_min = startDateTime.getMinute();
-//                                long startMillis = startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-//                                long endMillis = endDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
 
                                 Calendar beginTime = Calendar.getInstance();
                                 beginTime.set(start_year, Calendar.DECEMBER, start_day, start_hour, start_min); // Example: 15th September 2024, 9:00 AM
                                 long startMillis = beginTime.getTimeInMillis();
 
                                 int end_day = endDateTime.getDayOfMonth();
-                                Month end_month = endDateTime.getMonth();
                                 int end_year = endDateTime.getYear();
                                 int end_hour = endDateTime.getHour();
                                 int end_min = endDateTime.getMinute();
@@ -330,12 +317,12 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
 
                                 start_time = startMillis;
                                 end_time = endMillis;
-                                event_name.setText(title);
+                                session_name.setText(title);
                                 track.setText(selected_track);
                                 date.setText(formattedDate);
                                 time.setText(start_hour + ":" + start_min + "0 - " + end_hour + ":" + end_min + "0");
-                                location.setText(event_location);
-                                address.setText(event_address);
+                                location.setText(session_location);
+                                address.setText(session_address);
                                 chair.setText(text_chair);
                                 paper1.setText(paper1_name);
                                 paper2.setText(paper2_name);
@@ -348,9 +335,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                                     // If not, request the permissions
                                     ActivityCompat.requestPermissions(Session_Details_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                                 } else {
-                                    // Permissions are already granted, check event existence
+                                    // Permissions are already granted, check session existence
                                     // Start the first check
-                                    handler.post(checkEventRunnable);
+                                    handler.post(checkSessionRunnable);
                                 }
 
                                 if (ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.WRITE_CALENDAR)
@@ -364,7 +351,7 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                         }
 
                     } else {
-                        Toast.makeText(Session_Details_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Session_Details_Page.this, "No sessions found.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -430,11 +417,11 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             // If not, request the permissions
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
         } else {
-            // Permissions are already granted, check event existence
-            eventExists = isEventInCalendar(title, start_time, end_time);
-            if (eventExists) {
+            // Permissions are already granted, check session existence
+            sessionExists = isSessionInCalendar(title, start_time, end_time);
+            if (sessionExists) {
                 favorite.setImageResource(R.drawable.baseline_favorite_24);
-                Toast.makeText(this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Favourite Session!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -445,12 +432,10 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
     protected void onDestroy() {
         super.onDestroy();
         // Remove callbacks to prevent memory leaks
-        handler.removeCallbacks(checkEventRunnable);
+        handler.removeCallbacks(checkSessionRunnable);
     }
 
     private void showDeleteConfirmationDialog() {
-//        Context context = new Event_Page();
-
         // Create a Date object from the timestamp
         Date startTime = new Date(start_time);
         Date endTime = new Date(end_time);
@@ -475,9 +460,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                 paper3_name != null && paper4_name != null){
             // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
-                    "\n\nEvent Name: " + title +
-                    "\nLocation: " + event_address + " " + event_location +
-                    "\nDate: " + event_date +
+                    "\n\nSession Name: " + title +
+                    "\nLocation: " + session_address + " " + session_location +
+                    "\nDate: " + session_date +
                     "\nTime: " + start + " - " + end +
                     "\nSession Chair: " + text_chair +
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name +
@@ -487,9 +472,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                 paper3_name != null){
             // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
-                    "\n\nEvent Name: " + title +
-                    "\nLocation: " + event_address + " " + event_location +
-                    "\nDate: " + event_date +
+                    "\n\nSession Name: " + title +
+                    "\nLocation: " + session_address + " " + session_location +
+                    "\nDate: " + session_date +
                     "\nTime: " + start + " - " + end +
                     "\nSession Chair: " + text_chair +
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name + "\n\t\t3. " + paper3_name);
@@ -497,9 +482,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         else if (paper1_name != null && paper2_name != null){
             // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
-                    "\n\nEvent Name: " + title +
-                    "\nLocation: " + event_address + " " + event_location +
-                    "\nDate: " + event_date +
+                    "\n\nSession Name: " + title +
+                    "\nLocation: " + session_address + " " + session_location +
+                    "\nDate: " + session_date +
                     "\nTime: " + start + " - " + end +
                     "\nSession Chair: " + text_chair +
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name);
@@ -507,9 +492,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         else if (paper1_name != null){
             // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
-                    "\n\nEvent Name: " + title +
-                    "\nLocation: " + event_address + " " + event_location +
-                    "\nDate: " + event_date +
+                    "\n\nSession Name: " + title +
+                    "\nLocation: " + session_address + " " + session_location +
+                    "\nDate: " + session_date +
                     "\nTime: " + start + " - " + end +
                     "\nSession Chair: " + text_chair +
                     "\nPapers:\n\t\t1. " + paper1_name);
@@ -531,7 +516,7 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbHelper.deleteEvent(title, String.valueOf(event_date), start, end, text_chair);
+                dbHelper.deleteSession(title, String.valueOf(session_date), start, end, text_chair);
                 dialog.dismiss(); // Close dialog after confirming
                 startActivity(new Intent(Session_Details_Page.this, Session_Page.class));
             }
@@ -540,26 +525,26 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         dialog.show();
     }
 
-    public boolean isEventInCalendar(String eventTitle, long startTime, long endTime) {
+    public boolean isSessionInCalendar(String sessionTitle, long startTime, long endTime) {
         String[] proj =
                 new String[]{
                         Instances._ID,
                         Instances.BEGIN,
                         Instances.END,
                         Instances.EVENT_ID};
-        boolean eventExists;
-        try (Cursor cursor = Instances.query(getContentResolver(), proj, startTime, endTime, eventTitle)) {
-            eventExists = false;
+        boolean sessionExists;
+        try (Cursor cursor = Instances.query(getContentResolver(), proj, startTime, endTime, sessionTitle)) {
+            sessionExists = false;
             if (cursor.getCount() > 0) {
-                eventExists = true;
+                sessionExists = true;
             }
         }
 
-        return eventExists;
+        return sessionExists;
     }
 
     @SuppressLint("Range")
-    private void removeEventFromCalendar() {
+    private void removeSessionFromCalendar() {
         // Retrieve the event ID
         String[] proj = new String[]{
                 Instances.EVENT_ID
@@ -575,14 +560,14 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
             int rowsDeleted = getContentResolver().delete(deleteUri, null, null);
             if (rowsDeleted > 0) {
-                Toast.makeText(this, "Event removed from calendar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Session removed from calendar", Toast.LENGTH_SHORT).show();
                 favorite.setImageResource(R.drawable.baseline_favorite_border_24);
-                eventExists = false;
+                sessionExists = false;
             } else {
-                Toast.makeText(this, "Failed to remove event", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to remove session", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Event not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Session not found", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -592,11 +577,11 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
 
         if (requestCode == REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                boolean eventExists = isEventInCalendar(title, start_time, end_time);
+                boolean sessionExists = isSessionInCalendar(title, start_time, end_time);
 
-                if (eventExists) {
+                if (sessionExists) {
                     favorite.setImageResource(R.drawable.baseline_favorite_24);
-                    Toast.makeText(this, "Favourite Event!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Favourite Session!", Toast.LENGTH_SHORT).show();
                 }
 
             } else {

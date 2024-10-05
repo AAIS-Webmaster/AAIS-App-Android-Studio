@@ -1,11 +1,7 @@
 package com.example.capstoneproject;
 
-import java.util.ArrayList;
-
 public class Announcement
 {
-    public static ArrayList<Announcement> announcementList = new ArrayList<>();
-
     private String title, description, dateTime;
 
     public Announcement(String title, String description, String dateTime)

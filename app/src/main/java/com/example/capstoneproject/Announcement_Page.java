@@ -38,7 +38,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     LinearLayout contentView;
-    ImageView notification, menuIcon, delete_announcement;
+    ImageView notification, menuIcon;
     RecyclerView announcementRecycler;
     RecyclerView.Adapter adapter;
     FloatingActionButton addAnnouncement;
@@ -54,13 +54,12 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
             getSupportActionBar().hide();
         }
 
-        //Menu Hooks
+        // Hooks
         drawerLayout = findViewById(R.id.announcement_drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         announcementRecycler = findViewById(R.id.announcement_recycle);
         notification = findViewById(R.id.notification);
         menuIcon = findViewById(R.id.menu_icon);
-//        delete_announcement = findViewById(R.id.delete_announcement);
         contentView = findViewById(R.id.content);
         addAnnouncement = findViewById(R.id.add_announcement);
 
@@ -74,7 +73,6 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
 
             if(personEmail.equals("guptasdhuruv4@gmail.com")){
                 Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
-//                userIcon.setImageResource(R.drawable.admin_icon);
                 addAnnouncement.setVisibility(View.VISIBLE);
             }
         }

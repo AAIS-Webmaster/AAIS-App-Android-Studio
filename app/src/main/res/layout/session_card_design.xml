@@ -23,7 +23,7 @@
             app:cardCornerRadius="20dp">
 
             <TextView
-                android:id="@+id/event_name"
+                android:id="@+id/session_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Event Name"
@@ -58,7 +58,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/baseline_arrow_forward_ios_24"
             android:backgroundTint="@color/card_background"
-            android:id="@+id/event_info"/>
+            android:id="@+id/session_info"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

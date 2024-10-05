@@ -61,9 +61,7 @@ public class Add_Announcement_Page extends AppCompatActivity {
                     announcements.add(announcement);
                     dbHelper.insertData("Announcement", announcements);
                     dbHelper.removeAllSeenAnnouncements();
-//                    Intent intent = new Intent(Pop_up.this, Announcement_Page.class);
-//                    intent.putExtra("key1", title.getText().toString());
-//                    intent.putExtra("key2", description.getText().toString());
+
                     startActivity(new Intent(Add_Announcement_Page.this, Announcement_Page.class));
                 }
                 else if (title.getText().toString().equals("") && description.getText().toString().equals("")) {

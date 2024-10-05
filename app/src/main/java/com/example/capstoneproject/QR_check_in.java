@@ -35,37 +35,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 
-//public class QR_check_in extends AppCompatActivity {
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_qr_check_in);
-//
-//        IntentIntegrator intentIntegrator = new IntentIntegrator(this);
-//        intentIntegrator.setOrientationLocked(true);
-//        intentIntegrator.setPrompt("Scan QR Code");
-//        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-//        intentIntegrator.initiateScan();
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//
-//        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//
-//        if (intentResult != null){
-//            String content = intentResult.getContents();
-//            if (content != null){
-//                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
-//            }
-//            else {
-//                super.onActivityResult(requestCode, resultCode, data);
-//            }
-//        }
-//    }
-//}
-
 public class QR_check_in extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int CAMERA_PERMISSION_CODE = 100;
@@ -93,6 +62,7 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
             getSupportActionBar().hide();
         }
 
+        // Hooks
         scannerView = findViewById(R.id.scanner_view);
         scanner_text = findViewById(R.id.scanner_text);
 
@@ -136,8 +106,6 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
             }
         });
 
-//        mCodeScanner = new CodeScanner(this, scannerView);
-
         // Check if the camera permission is granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -148,20 +116,6 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
             // Permission is already granted, initialize the scanner
             initializeScanner();
         }
-
-//        mCodeScanner = new CodeScanner(this, scannerView);
-//        mCodeScanner.setDecodeCallback(new DecodeCallback() {
-//            @Override
-//            public void onDecoded(@NonNull final Result result) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        scanner_text.setText(result.getText());
-//                        mCodeScanner.startPreview();
-//                    }
-//                });
-//            }
-//        });
 
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,9 +157,6 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
     }
 
     private void initializeScanner() {
-//        CodeScannerView scannerView = findViewById(R.id.scanner_view);
-//        scanner_text = findViewById(R.id.scanner_text);
-
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
@@ -237,7 +188,6 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
     }
 
     private void navigationDrawer() {
-
         //Navigation Drawer
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);

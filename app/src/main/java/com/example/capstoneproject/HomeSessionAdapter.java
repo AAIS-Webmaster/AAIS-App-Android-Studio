@@ -45,8 +45,7 @@ public class HomeSessionAdapter extends RecyclerView.Adapter<HomeSessionAdapter.
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, Session_Details_Page.class);
-                intent.putExtra("event_name", homeAnnouncementLocations.get(position).subject);
-//                intent.putExtra("time", time);
+                intent.putExtra("session_name", homeAnnouncementLocations.get(position).subject);
                 context.startActivity(intent);
             }
         });

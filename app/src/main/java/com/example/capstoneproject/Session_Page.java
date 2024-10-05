@@ -42,13 +42,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Session_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CalendarAdapter.OnItemListener {
-
-    TextView user;
     static final float END_SCALE = 0.7f;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
-    String personName, personEmail, event_name, time;
-    // Drawer Menu
+    String personName, personEmail;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ImageView menuIcon, notification;
@@ -59,23 +56,22 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
     private MyDatabaseHelper dbHelper;
     private SessionAdapter.RecyclerViewClickListener listener;
     ArrayList<String> pos;
-    FloatingActionButton AddEvent;
+    FloatingActionButton AddSession;
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
-    Boolean event_present = false;
-    Boolean isArrowUp = true;
+    Boolean session_present = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
+        setContentView(R.layout.activity_session_page);
         dbHelper = new MyDatabaseHelper();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        //Menu Hooks
+        // Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuIcon = findViewById(R.id.menu_icon);
@@ -84,7 +80,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         error = findViewById(R.id.error);
         generalRecycler = findViewById(R.id.general_recycle);
 
-        AddEvent = findViewById(R.id.addEvent);
+        AddSession = findViewById(R.id.addSession);
         unseen = findViewById(R.id.unseen);
 
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
@@ -99,11 +95,9 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             personEmail = acct.getEmail();
 
             if (personEmail.equals("guptasdhuruv4@gmail.com")){
-                AddEvent.setVisibility(View.VISIBLE);
+                AddSession.setVisibility(View.VISIBLE);
             }
         }
-
-//        Animation rotateAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_arrow);
 
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
@@ -142,131 +136,19 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             }
         });
 
-//        OptionMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Start the rotation animation
-//                OptionMenu.startAnimation(rotateAnimation);
-//
-//                // Toggle the arrow state
-//                if (isArrowUp) {
-//                    OptionMenu.setImageResource(R.drawable.menu_downward); // Set the downward arrow drawable
-//                    AddEvent.setVisibility(View.VISIBLE);
-//                    DeleteEvent.setVisibility(View.VISIBLE);
-//                } else {
-//                    OptionMenu.setImageResource(R.drawable.floating_menu); // Set the upward arrow drawable
-//                    AddEvent.setVisibility(View.GONE);
-//                    DeleteEvent.setVisibility(View.GONE);
-//                }
-//                isArrowUp = !isArrowUp;
-//            }
-//        });
-
-        AddEvent.setOnClickListener(new View.OnClickListener() {
+        AddSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Session_Page.this, Add_Event_Page.class);
+                Intent intent = new Intent(Session_Page.this, Add_Session_Page.class);
                 intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth()));
                 intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue()));
                 intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear()));
                 startActivity(intent);
-
-//                startActivity(new Intent(HomePage.this, Pop_up_add_event.class));
             }
         });
-
-//        generalRecycler.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setOnClickListener();
-//            }
-//        });
-//        generalRecycler();
-
-        // Change color of specific items
-//        Menu menu = navigationView.getMenu();
-
-//        MenuItem socialsItem = menu.findItem(R.id.socials);
-//
-//        SpannableString s = new SpannableString(socialsItem.getTitle());
-//        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.highlighted_item_color)), 0, s.length(), 0);
-//        socialsItem.setTitle(s);
         navigationDrawer();
         setWeekView();
     }
-
-    private void generalRecycler() {
-//        setOnClickListener();
-        generalRecycler.setHasFixedSize(true);
-        generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-        ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
-
-        pos = new ArrayList<>();
-//        ArrayList<Event> filteredEvents = new ArrayList<>();
-
-        dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
-            @Override
-            public void onEventsRetrieved(List<Event> events) {
-                if (events != null) {
-                    // Filter events to match the time of the current HourEvent
-                    for (Event event : events) {
-                        String track = event.getTrack();
-                        String name = event.getName();
-                        String time = event.getStart_time().toString()
-                                + " - " + event.getEnd_time().toString();
-                        generalLocations.add(new SessionHelperClass(track, name, time));
-                        adapter = new SessionAdapter(generalLocations, listener);
-                        generalRecycler.setAdapter(adapter);
-                    }
-
-                } else {
-                    Toast.makeText(Session_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-                Toast.makeText(Session_Page.this, "Error retrieving data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        pos.add("Event1");
-        pos.add("Event2");
-        pos.add("Event3");
-        pos.add("Event4");
-
-//        Toast.makeText(this, String.valueOf(filteredEvents.size()), Toast.LENGTH_SHORT).show();
-//        for (int n = 0; n < filteredEvents.size(); n++){
-//            Toast.makeText(this, "in", Toast.LENGTH_SHORT).show();
-//            String name = filteredEvents.get(n).getName();
-//            String time = filteredEvents.get(n).getStart_time().toString()
-//                    + " - " + filteredEvents.get(n).getEnd_time().toString();
-//            generalLocations.add(new GeneralHelperClass(name, time));
-//            adapter = new GeneralAdapter(generalLocations, listener);
-//            generalRecycler.setAdapter(adapter);
-//        }
-
-//        generalLocations.add(new GeneralHelperClass("Information Technology Conference", "4:00 - 6:00"));
-//        generalLocations.add(new GeneralHelperClass("Health Conference", "5:00 - 7:00"));
-//        generalLocations.add(new GeneralHelperClass("Research Conference", "6:00 - 8:00"));
-//        adapter = new GeneralAdapter(generalLocations, listener);
-//        generalRecycler.setAdapter(adapter);
-    }
-
-//    private void setOnClickListener() {
-//        listener = new GeneralAdapter.RecyclerViewClickListener() {
-//            @Override
-//            public void onClick(View v, int position) {
-////                listener.onClick(v, position);
-//
-//                Intent intent = new Intent(HomePage.this, Event_Page.class);
-//                intent.putExtra("event_name", pos.get(position));
-////                intent.putExtra("time", time);
-//                startActivity(intent);
-//            }
-//        };
-//    }
 
     //Navigation Drawer Functions
     @Override
@@ -354,7 +236,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             // Adjust to the Monday of the week
             CalendarUtils.selectedDate = CalendarUtils.selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         }
-        showEvents(CalendarUtils.selectedDate);
+        showSessions(CalendarUtils.selectedDate);
 
         monthYearText.setText(monthYearFromDate(CalendarUtils.selectedDate));
         ArrayList<LocalDate> days = daysInWeekArray(CalendarUtils.selectedDate);
@@ -363,55 +245,47 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-//        setEventAdapter();
     }
-
-//    private void setEventAdapter()
-//    {
-//        ArrayList<Event> dailyEvents = Event.eventsForDate(CalendarUtils.selectedDate);
-////        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), dailyEvents);
-////         eventListView.setAdapter(eventAdapter); // Uncomment if you have an event list view
-//    }
 
     @Override
     public void onItemClick(int position, LocalDate date) {
         CalendarUtils.selectedDate = date;
-        showEvents(date);
+        showSessions(date);
         setWeekView();
     }
 
-    private void showEvents(LocalDate current_date) {
+    private void showSessions(LocalDate current_date) {
         generalRecycler.setHasFixedSize(true);
         generalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
-        event_present = false;
+        session_present = false;
 
-        dbHelper.getEvents(new MyDatabaseHelper.EventsRetrievalCallback() {
+        dbHelper.getSessions(new MyDatabaseHelper.SessionsRetrievalCallback() {
             @Override
-            public void onEventsRetrieved(List<Event> events) {
+            public void onEventsRetrieved(List<Session> sessions) {
                 ArrayList<SessionHelperClass> generalLocations = new ArrayList<>();
-                event_present = false;
-                if (events != null && !events.isEmpty()) {
-                    // Sort and display events
-                    Collections.sort(events, new Comparator<Event>() {
+                session_present = false;
+                if (sessions != null && !sessions.isEmpty()) {
+                    // Sort and display sessionS
+                    Collections.sort(sessions, new Comparator<Session>() {
                         @Override
-                        public int compare(Event event1, Event event2) {
-                            return event1.getStart_time().compareTo(event2.getStart_time());
+                        public int compare(Session session1, Session session2) {
+                            return session1.getStart_time().compareTo(session2.getStart_time());
                         }
                     });
 
-                    for (Event event : events) {
-                        LocalDate date = event.getDate();
-                        String time = event.getStart_time().toString() + " - " + event.getEnd_time().toString();
+                    for (Session session : sessions) {
+                        LocalDate date = session.getDate();
+                        String time = session.getStart_time().toString() + " - " + session.getEnd_time().toString();
 
                         if (date.equals(current_date)) {
-                            event_present = true;
-                            generalLocations.add(new SessionHelperClass("Track: " + event.getTrack(), event.getName(), time));
+                            session_present = true;
+                            generalLocations.add(new SessionHelperClass("Track: " + session.getTrack(), session.getName(), time));
                         }
                     }
 
-                    if (event_present) {
+                    if (session_present) {
                         error.setVisibility(View.GONE);
                     } else {
                         error.setVisibility(View.VISIBLE);
@@ -421,7 +295,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
                     generalRecycler.setAdapter(adapter);
 
                 } else {
-                    Toast.makeText(Session_Page.this, "No events found.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Session_Page.this, "No sessionS found.", Toast.LENGTH_SHORT).show();
                 }
             }
 

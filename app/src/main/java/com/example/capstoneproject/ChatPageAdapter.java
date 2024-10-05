@@ -17,7 +17,6 @@ public class ChatPageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_MESSAGE = 1;
-
     ArrayList<ChatPageHelperClass> firstLocations;
     private MyDatabaseHelper dbHelper;
 
@@ -74,7 +73,6 @@ public class ChatPageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 messageViewHolder.card_view.setVisibility(View.GONE);
                             } else {
                                 // Set default image or the name initial if no URL is found
-    //                            messageViewHolder.imageView.setImageDrawable(null); // Clear previous image
                                 messageViewHolder.card_view.setText(nameInitial); // Show the initial
                                 messageViewHolder.card_view.setVisibility(View.VISIBLE);
                                 messageViewHolder.imageView.setVisibility(View.GONE);

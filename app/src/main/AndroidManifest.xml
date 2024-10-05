@@ -34,7 +34,7 @@
             android:name=".QR_check_in"
             android:exported="false" />
         <activity
-            android:name=".Add_Event_Page"
+            android:name=".Add_Session_Page"
             android:exported="false" />
         <activity
             android:name=".Session_Details_Page"

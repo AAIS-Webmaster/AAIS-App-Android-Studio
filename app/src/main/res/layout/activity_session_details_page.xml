@@ -82,9 +82,9 @@
             android:paddingBottom="25dp"
             android:paddingTop="10dp">
 
-            <!-- Event Name TextView aligned to the left -->
+            <!-- Session Name TextView aligned to the left -->
             <TextView
-                android:id="@+id/event_name"
+                android:id="@+id/session_name"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
@@ -93,7 +93,7 @@
                 android:layout_alignParentStart="true"
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                android:text="event" />
+                android:text="session" />
 
             <!-- First ImageView aligned to the right -->
             <ImageView
