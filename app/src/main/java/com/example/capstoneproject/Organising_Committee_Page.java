@@ -39,40 +39,45 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Organising_Committee_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class Organising_Committee_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    // Variables to hold user information
     String personName, personEmail;
-    ImageView[] imageViews;
-    Button unseen;
-    Map<ImageView, String> imageUrlMap;
-    Map<ImageView, String> linkMap;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    ImageView menuIcon, notification;
-    LinearLayout contentView;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    private MyDatabaseHelper dbHelper;
+    ImageView[] imageViews; // Array of ImageViews to display committee member images
+    Button unseen; // Button to handle unseen announcements
+    Map<ImageView, String> imageUrlMap; // Map to hold ImageView and corresponding image URLs
+    Map<ImageView, String> linkMap; // Map to hold ImageView and corresponding links
+    DrawerLayout drawerLayout; // Navigation drawer layout
+    NavigationView navigationView; // Navigation view for menu items
+    ImageView menuIcon, notification; // Icons for menu and notifications
+    LinearLayout contentView; // Content view of the layout
+    GoogleSignInOptions gso; // Google Sign-In options
+    GoogleSignInClient gsc; // Google Sign-In client
+    private MyDatabaseHelper dbHelper; // Database helper for managing announcements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organising_committee);
-        dbHelper = new MyDatabaseHelper();
+        dbHelper = new MyDatabaseHelper(); // Initialize database helper
 
+        // Hide the action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
+        // Configure Google Sign-In options
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
 
+        // Get the signed-in account details
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct != null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+        if (acct != null) {
+            personName = acct.getDisplayName(); // Retrieve display name
+            personEmail = acct.getEmail(); // Retrieve email
         }
 
+        // Initialize UI components
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuIcon = findViewById(R.id.menu_icon);
@@ -80,6 +85,7 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
         contentView = findViewById(R.id.content);
         unseen = findViewById(R.id.unseen);
 
+        // Retrieve announcement seen status from the database
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -87,10 +93,10 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE); // Hide unseen button if status exists
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button if no status
                     }
                 } catch (Exception e) {
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
@@ -103,7 +109,7 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
             }
         });
 
-        // Initialize ImageViews
+        // Initialize ImageViews for committee member images
         imageViews = new ImageView[]{
                 findViewById(R.id.image1),
                 findViewById(R.id.image2),
@@ -134,27 +140,31 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
                 findViewById(R.id.image27)
         };
 
+        // Initialize maps to store image URLs and links
         imageUrlMap = new HashMap<>();
         linkMap = new HashMap<>();
 
+        // Fetch images from the committee page
         new FetchImagesTask().execute("https://acis.aaisnet.org/acis2024/committee/");
-        navigationDrawer();
+        navigationDrawer(); // Setup navigation drawer
 
+        // Set click listeners for notification and unseen buttons
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class)); // Navigate to Announcement Page
             }
         });
 
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Organising_Committee_Page.this, Announcement_Page.class)); // Navigate to Announcement Page
             }
         });
     }
 
+    // AsyncTask to fetch images and links from the provided URL
     private class FetchImagesTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -162,9 +172,10 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
             String url = urls[0];
 
             try {
+                // Connect to the website and retrieve the document
                 Document doc = Jsoup.connect(url).get();
 
-                // Select the specific <div> you are interested in
+                // Select the specific <div> containing committee member information
                 Element targetDiv = doc.select("div.entry-content").first(); // Adjust the selector to match your target <div>
 
                 if (targetDiv != null) {
@@ -174,12 +185,12 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
                     for (Element img : imgElements) {
                         if (i >= imageViews.length) break; // Prevent overflow if more images than ImageViews
 
-                        String imgUrl = img.attr("src");
+                        String imgUrl = img.attr("src"); // Get image URL
                         System.out.println("Image src: " + imgUrl);
                         // Store imgUrl and corresponding ImageView
                         imageUrlMap.put(imageViews[i], imgUrl);
 
-                        i++;
+                        i++; // Increment counter
                     }
 
                     // Extract <a> href attributes within the target <div>
@@ -188,41 +199,41 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
                     for (Element link : linkElements) {
                         if (i >= imageViews.length) break; // Prevent overflow if more links than ImageViews
 
-                        String linkHref = link.attr("href");
+                        String linkHref = link.attr("href"); // Get link URL
                         System.out.println("Link href: " + linkHref);
                         // Store linkHref and corresponding ImageView
                         linkMap.put(imageViews[i], linkHref);
 
-                        i++;
+                        i++; // Increment counter
                     }
                 } else {
-                    System.out.println("Target div not found.");
+                    System.out.println("Target div not found."); // Log if target div is not found
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Handle any IO exceptions
             }
 
-            return null;
+            return null; // Return null for Void type
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            // Set images and click listeners
+            // Set images in ImageViews and attach click listeners
             for (Map.Entry<ImageView, String> entry : imageUrlMap.entrySet()) {
                 ImageView imageView = entry.getKey();
                 String imgUrl = entry.getValue();
-                Picasso.get().load(imgUrl).into(imageView);
+                Picasso.get().load(imgUrl).into(imageView); // Load image into ImageView
 
-                // Set OnClickListener
+                // Set OnClickListener to open the corresponding link
                 String linkHref = linkMap.get(imageView);
                 if (linkHref != null) {
                     imageView.setOnClickListener(v -> {
                         try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkHref));
-                            startActivity(intent);
-                        } catch (Exception e){
-                            Toast.makeText(Organising_Committee_Page.this, "Unable to Open the URL", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkHref)); // Create intent to open link
+                            startActivity(intent); // Start activity
+                        } catch (Exception e) {
+                            Toast.makeText(Organising_Committee_Page.this, "Unable to Open the URL", Toast.LENGTH_SHORT).show(); // Show error message if URL can't be opened
                         }
                     });
                 }
@@ -230,42 +241,50 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
         }
     }
 
-    //Navigation Drawer Functions
+    // Handle back button press for navigation drawer
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.closeDrawer(GravityCompat.START); // Close drawer if it's open
         }
-        else super.onBackPressed();
+        else super.onBackPressed(); // Default back press behavior
     }
 
+    // Method to initialize and handle the navigation drawer
     private void navigationDrawer() {
-        //Navigation Drawer
+        // Bring the navigation view to the front and set its item selected listener
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_org);
+        navigationView.setCheckedItem(R.id.nav_org);  // Highlight the current page in the drawer
 
+        // Handle menu icon click to open/close the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);  // Close drawer if visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);  // Open drawer if hidden
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
+
+        // Add animation to the navigation drawer
         animateNavigationDrawer();
     }
 
+    // Method to animate the navigation drawer opening and closing
     private void animateNavigationDrawer() {
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Apply scaling and translation effect on the content view as the drawer slides
                 final float diffScaleOffset = slideOffset * (1 - END_SCALE);
                 final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                contentView.setScaleX(offsetScale);  // Scale X-axis
+                contentView.setScaleY(offsetScale);  // Scale Y-axis
 
+                // Translate content view to the right as the drawer opens
                 final float xOffset = drawerView.getWidth() * slideOffset;
                 final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
                 final float xTranslation = xOffset - xOffsetDiff;
@@ -274,8 +293,10 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
         });
     }
 
+    // Handle item selection in the navigation drawer
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Navigate to the appropriate activity based on the selected item
         if(item.toString().equals("Home")){
             startActivity(new Intent(Organising_Committee_Page.this, Home_Page.class));
         }

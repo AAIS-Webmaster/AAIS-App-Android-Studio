@@ -40,33 +40,35 @@ import java.util.List;
 
 public class Home_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    TextView user, user_icon_text;
-    Button unseen;
-    static final float END_SCALE = 0.7f;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    String personName, personEmail;
-    DrawerLayout drawerLayout;
-    CardView track, check_in, site_map;
-    NavigationView navigationView;
-    ImageView menuIcon, notification, userIcon;
-    LinearLayout contentView;
-    RecyclerView sessionRecycler;
-    RecyclerView.Adapter adapter;
-    private MyDatabaseHelper dbHelper;
-    private SessionAdapter.RecyclerViewClickListener listener;
+    // UI elements
+    TextView user, user_icon_text; // User welcome message and icon text
+    Button unseen; // Button for unseen announcements
+    static final float END_SCALE = 0.7f; // Constant for drawer animation scaling
+    GoogleSignInOptions gso; // Google sign-in options
+    GoogleSignInClient gsc; // Google sign-in client
+    String personName, personEmail; // User's name and email
+    DrawerLayout drawerLayout; // Navigation drawer layout
+    CardView track, check_in, site_map; // Card views for different functionalities
+    NavigationView navigationView; // Navigation view for the drawer
+    ImageView menuIcon, notification, userIcon; // Icons for menu and notifications
+    LinearLayout contentView; // Main content view
+    RecyclerView sessionRecycler; // Recycler view for displaying sessions
+    RecyclerView.Adapter adapter; // Adapter for the Recycler view
+    private MyDatabaseHelper dbHelper; // Database helper instance
+    private SessionAdapter.RecyclerViewClickListener listener; // Listener for Recycler view clicks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        dbHelper = new MyDatabaseHelper();
+        super.onCreate(savedInstanceState); // Call to the parent class's onCreate method
+        setContentView(R.layout.activity_home); // Set the layout for the activity
+        dbHelper = new MyDatabaseHelper(); // Initialize the database helper
 
+        // Hide the action bar if it exists
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        //Menu Hooks
+        // Initialize menu hooks (UI elements)
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuIcon = findViewById(R.id.menu_icon);
@@ -78,100 +80,122 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         user = findViewById(R.id.welcome);
         unseen = findViewById(R.id.unseen);
 
+        // Initialize card views
         track = findViewById(R.id.track);
         check_in = findViewById(R.id.qr_code_check_in);
         site_map = findViewById(R.id.site_map);
 
+        // Configure Google Sign-In options
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
+        gsc = GoogleSignIn.getClient(this, gso); // Initialize GoogleSignInClient
 
+        // Get the last signed-in account
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct != null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
-            String profileImageUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
-            if (!profileImageUrl.isEmpty()) {
-                Picasso.get().load(profileImageUrl).into(userIcon); // Use Picasso to load the image
-                dbHelper.saveUserDataWithImageUrl(personEmail, personName, profileImageUrl);
-            }
-            else {
-                user_icon_text.setText(personName.substring(0, 1).toUpperCase());
-                user_icon_text.setVisibility(View.VISIBLE);
-                userIcon.setVisibility(View.GONE);
-            }
-            user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
-                    personName.toString().split(" ")[0].substring(1).toLowerCase() +
-                    " !");
+        if (acct != null) { // Check if an account is available
+            personName = acct.getDisplayName(); // Get user display name
+            personEmail = acct.getEmail(); // Get user email
+            String profileImageUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : ""; // Get profile image URL
 
+            // Load the user's profile image using Picasso
+            if (!profileImageUrl.isEmpty()) {
+                Picasso.get().load(profileImageUrl).into(userIcon);
+                dbHelper.saveUserDataWithImageUrl(personEmail, personName, profileImageUrl); // Save user data to the database
+            } else {
+                // Set the initial of the user's name if no image is available
+                user_icon_text.setText(personName.substring(0, 1).toUpperCase());
+                user_icon_text.setVisibility(View.VISIBLE); // Show initial
+                userIcon.setVisibility(View.GONE); // Hide profile image
+            }
+
+            // Set welcome message for the user
+            user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
+                    personName.toString().split(" ")[0].substring(1).toLowerCase() + " !");
+
+            // Show admin sign-in message if the user is an admin
             if (personEmail.equals("guptasdhuruv4@gmail.com")) {
                 Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
             }
         }
-        
+
+        // Set click listener for the "track" card view
         track.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Open the track URL in a web browser
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://acis.aaisnet.org/acis2024/tracks/"));
                     startActivity(intent);
-                } catch (Exception e){
+                } catch (Exception e) {
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Home_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        // Set click listener for the "site map" card view
         site_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home_Page.this, Site_Map_Page.class));
+                startActivity(new Intent(Home_Page.this, Site_Map_Page.class)); // Navigate to the site map page
             }
         });
 
+        // Retrieve the seen announcement status from the database
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
+                    // Check if there is a seen status in the data snapshot
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE); // Hide unseen button if already seen
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button if not seen
                     }
                 } catch (Exception e) {
+                    // Print error message if an exception occurs
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Print error message if the database query fails
                 System.out.println("Failed to retrieve SeenAnnouncement status: " + databaseError.getMessage());
             }
         });
 
+        // Set click listener for the "check-in" card view
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home_Page.this, QR_check_in.class));
+                startActivity(new Intent(Home_Page.this, QR_check_in.class)); // Navigate to the QR check-in page
             }
         });
 
+        // Set click listener for the notification icon
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Home_Page.this, Announcement_Page.class)); // Navigate to the announcement page
             }
         });
 
+        // Set click listener for the unseen announcements button
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Home_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Home_Page.this, Announcement_Page.class)); // Navigate to the announcement page
             }
         });
 
+        // Initialize the session RecyclerView
         sessionRecycler();
+
+        // Initialize the navigation drawer
+        navigationDrawer();
 
         // Change color of specific items
 //        Menu menu = navigationView.getMenu();
@@ -181,18 +205,19 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
 //        SpannableString s = new SpannableString(socialsItem.getTitle());
 //        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.highlighted_item_color)), 0, s.length(), 0);
 //        socialsItem.setTitle(s);
-        navigationDrawer();
     }
 
     private void sessionRecycler() {
-        sessionRecycler.setHasFixedSize(true);
-        sessionRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        sessionRecycler.setHasFixedSize(true); // Optimize RecyclerView for fixed-size items
+        sessionRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)); // Set layout manager to horizontal
 
+        // Retrieve sessions from the database
         dbHelper.getSessions(new MyDatabaseHelper.SessionsRetrievalCallback() {
             @Override
             public void onEventsRetrieved(List<Session> sessions) {
                 if (sessions != null && !sessions.isEmpty()) {
                     ArrayList<HomeSessionHelperClass> announcementLocations = new ArrayList<>();
+
                     // Sort sessions by date, then by start time, and finally by end time
                     Collections.sort(sessions, new Comparator<Session>() {
                         @Override
@@ -249,7 +274,6 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                                 "Duration: " + sessionTime,
                                 "Track: " + track
                         ));
-
                         sessionCount++;
                     }
 
@@ -270,44 +294,50 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         });
     }
 
-    //Navigation Drawer Functions
+    // Handle back button press for navigation drawer
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.closeDrawer(GravityCompat.START); // Close drawer if it's open
         }
-        else super.onBackPressed();
+        else super.onBackPressed(); // Default back press behavior
     }
 
+    // Method to initialize and handle the navigation drawer
     private void navigationDrawer() {
-
-        //Navigation Drawer
+        // Bring the navigation view to the front and set its item selected listener
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
+        navigationView.setCheckedItem(R.id.nav_home);  // Highlight the current page in the drawer
 
+        // Handle menu icon click to open/close the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);  // Close drawer if visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);  // Open drawer if hidden
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
 
+        // Add animation to the navigation drawer
         animateNavigationDrawer();
     }
 
+    // Method to animate the navigation drawer opening and closing
     private void animateNavigationDrawer() {
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Apply scaling and translation effect on the content view as the drawer slides
                 final float diffScaleOffset = slideOffset * (1 - END_SCALE);
                 final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                contentView.setScaleX(offsetScale);  // Scale X-axis
+                contentView.setScaleY(offsetScale);  // Scale Y-axis
 
+                // Translate content view to the right as the drawer opens
                 final float xOffset = drawerView.getWidth() * slideOffset;
                 final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
                 final float xTranslation = xOffset - xOffsetDiff;
@@ -316,8 +346,10 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         });
     }
 
+    // Handle item selection in the navigation drawer
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Navigate to the appropriate activity based on the selected item
         if(item.toString().equals("Sessions")){
             startActivity(new Intent(Home_Page.this, Session_Page.class));
         }
@@ -345,6 +377,6 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                 }
             });
         }
-        return true;
+        return true; // Indicate that the item selection has been handled
     }
 }

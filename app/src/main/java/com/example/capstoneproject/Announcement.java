@@ -1,43 +1,45 @@
 package com.example.capstoneproject;
 
-public class Announcement
-{
-    private String title, description, dateTime;
+// Announcement class represents an announcement with a title, description, and date/time
+public class Announcement {
+    private String title;       // Title of the announcement
+    private String description; // Description of the announcement
+    private String dateTime;    // Date and time of the announcement
 
-    public Announcement(String title, String description, String dateTime)
-    {
-        this.title = title;
-        this.description = description;
-        this.dateTime = dateTime;
+    // Constructor to initialize an Announcement object with title, description, and dateTime
+    public Announcement(String title, String description, String dateTime) {
+        this.title = title;       // Set the title
+        this.description = description; // Set the description
+        this.dateTime = dateTime; // Set the date and time
     }
 
-    public String getTitle()
-    {
+    // Getter method to retrieve the title of the announcement
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(String name)
-    {
-        this.title = title;
+    // Setter method to update the title of the announcement
+    public void setTitle(String name) {
+        this.title = title; // Update the title
     }
 
-    public String getDateTime()
-    {
+    // Getter method to retrieve the date and time of the announcement
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDate(String dateTime)
-    {
-        this.dateTime = dateTime;
+    // Setter method to update the date and time of the announcement
+    public void setDate(String dateTime) {
+        this.dateTime = dateTime; // Update the date and time
     }
 
-    public String getDescription()
-    {
+    // Getter method to retrieve the description of the announcement
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description)
-    {
-        this.description = description;
+    // Setter method to update the description of the announcement
+    public void setDescription(String description) {
+        this.description = description; // Update the description
     }
 }

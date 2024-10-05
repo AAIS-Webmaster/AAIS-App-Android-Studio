@@ -42,36 +42,37 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Session_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CalendarAdapter.OnItemListener {
-    static final float END_SCALE = 0.7f;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    String personName, personEmail;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    ImageView menuIcon, notification;
-    Button unseen;
-    LinearLayout contentView, error;
-    RecyclerView generalRecycler;
-    RecyclerView.Adapter adapter;
-    private MyDatabaseHelper dbHelper;
-    private SessionAdapter.RecyclerViewClickListener listener;
-    ArrayList<String> pos;
-    FloatingActionButton AddSession;
-    private TextView monthYearText;
-    private RecyclerView calendarRecyclerView;
-    Boolean session_present = false;
+    static final float END_SCALE = 0.7f; // Scale factor for the drawer animation
+    GoogleSignInOptions gso; // Google Sign-In options
+    GoogleSignInClient gsc; // Google Sign-In client
+    String personName, personEmail; // Variables to hold user's name and email
+    DrawerLayout drawerLayout; // Drawer layout for navigation
+    NavigationView navigationView; // Navigation view for the drawer
+    ImageView menuIcon, notification; // UI elements for menu and notification
+    Button unseen; // Button for unseen announcements
+    LinearLayout contentView, error; // Layouts for content and error messages
+    RecyclerView generalRecycler; // RecyclerView for displaying sessions
+    RecyclerView.Adapter adapter; // Adapter for the RecyclerView
+    private MyDatabaseHelper dbHelper; // Database helper for database operations
+    private SessionAdapter.RecyclerViewClickListener listener; // Listener for RecyclerView item clicks
+    ArrayList<String> pos; // ArrayList for positions (not used in the provided code)
+    FloatingActionButton AddSession; // Floating action button for adding sessions
+    private TextView monthYearText; // TextView for displaying month and year
+    private RecyclerView calendarRecyclerView; // RecyclerView for the calendar view
+    Boolean session_present = false; // Flag to check if sessions are present
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_session_page);
-        dbHelper = new MyDatabaseHelper();
+        setContentView(R.layout.activity_session_page); // Set the layout for the activity
+        dbHelper = new MyDatabaseHelper(); // Initialize database helper
 
+        // Hide the default action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Hooks
+        // Hooks for UI components
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuIcon = findViewById(R.id.menu_icon);
@@ -79,37 +80,39 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         contentView = findViewById(R.id.content);
         error = findViewById(R.id.error);
         generalRecycler = findViewById(R.id.general_recycle);
-
         AddSession = findViewById(R.id.addSession);
         unseen = findViewById(R.id.unseen);
-
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         monthYearText = findViewById(R.id.monthYearTV);
 
+        // Set up Google Sign-In options and client
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
 
+        // Get the last signed-in account
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+        if (acct != null) {
+            personName = acct.getDisplayName(); // Get user's name
+            personEmail = acct.getEmail(); // Get user's email
 
-            if (personEmail.equals("guptasdhuruv4@gmail.com")){
+            // Show the AddSession button only for a specific email
+            if (personEmail.equals("guptasdhuruv4@gmail.com")) {
                 AddSession.setVisibility(View.VISIBLE);
             }
         }
 
+        // Check if the user has seen announcements
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
                     if (dataSnapshot.exists()) {
-                        String seenStatus = dataSnapshot.getValue(String.class);
+                        String seenStatus = dataSnapshot.getValue(String.class); // Get seen status
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE); // Hide unseen button if seen
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button if not seen
                     }
                 } catch (Exception e) {
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
@@ -122,82 +125,90 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // Set up notification button click listener
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Session_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Page.this, Announcement_Page.class)); // Start Announcement_Page
             }
         });
 
+        // Set up unseen button click listener
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Session_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Session_Page.this, Announcement_Page.class)); // Start Announcement_Page
             }
         });
 
+        // Set up AddSession button click listener
         AddSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Session_Page.this, Add_Session_Page.class);
-                intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth()));
-                intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue()));
-                intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear()));
-                startActivity(intent);
+                Intent intent = new Intent(Session_Page.this, Add_Session_Page.class); // Create intent for Add_Session_Page
+                intent.putExtra("date", Integer.valueOf(CalendarUtils.selectedDate.getDayOfMonth())); // Pass selected date
+                intent.putExtra("month", Integer.valueOf(CalendarUtils.selectedDate.getMonthValue())); // Pass selected month
+                intent.putExtra("year", Integer.valueOf(CalendarUtils.selectedDate.getYear())); // Pass selected year
+                startActivity(intent); // Start Add_Session_Page
             }
         });
-        navigationDrawer();
-        setWeekView();
+
+        navigationDrawer(); // Set up the navigation drawer
+        setWeekView(); // Initialize the week view
     }
 
-    //Navigation Drawer Functions
+    // Handle back button pressed event
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START); // Close drawer if it is open
+        } else {
+            super.onBackPressed(); // Otherwise, execute default back press action
         }
-        else super.onBackPressed();
     }
 
     private void navigationDrawer() {
+        // Set up navigation drawer
+        navigationView.bringToFront(); // Bring navigation view to the front
+        navigationView.setNavigationItemSelectedListener(this); // Set listener for navigation items
+        navigationView.setCheckedItem(R.id.nav_session); // Check the current item
 
-        //Navigation Drawer
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_session);
-
+        // Set up menu icon click listener to open/close the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START); // Close drawer if it is open
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START); // Open drawer if it is closed
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
 
-        animateNavigationDrawer();
+        animateNavigationDrawer(); // Animate drawer on opening/closing
     }
 
     private void animateNavigationDrawer() {
+        // Add a listener to handle drawer slide animations
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                final float diffScaleOffset = slideOffset * (1 - END_SCALE);
-                final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                final float diffScaleOffset = slideOffset * (1 - END_SCALE); // Calculate the scale offset
+                final float offsetScale = 1 - diffScaleOffset; // Calculate the new scale for content
+                contentView.setScaleX(offsetScale); // Scale content view horizontally
+                contentView.setScaleY(offsetScale); // Scale content view vertically
 
-                final float xOffset = drawerView.getWidth() * slideOffset;
-                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
-                final float xTranslation = xOffset - xOffsetDiff;
-                contentView.setTranslationX(xTranslation);
+                final float xOffset = drawerView.getWidth() * slideOffset; // Calculate x offset
+                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2; // Calculate difference
+                final float xTranslation = xOffset - xOffsetDiff; // Calculate translation for the content view
+                contentView.setTranslationX(xTranslation); // Apply translation to content view
             }
         });
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation item selections
         if(item.toString().equals("Home")){
             startActivity(new Intent(Session_Page.this, Home_Page.class));
         }
@@ -229,6 +240,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
     }
 
     private void setWeekView() {
+        // Set up the calendar view for the current week
         if (CalendarUtils.selectedDate == null) {
             LocalDate firstDayOfDecember = LocalDate.of(LocalDate.now().getYear(), 12, 1);
             CalendarUtils.selectedDate = firstDayOfDecember.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));

@@ -35,37 +35,40 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 
-public class QR_check_in extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class QR_check_in extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int CAMERA_PERMISSION_CODE = 100;
-    static final float END_SCALE = 0.7f;
-    private CodeScanner mCodeScanner;
-    CodeScannerView scannerView;
-    TextView scanner_text;
-    String personName, personEmail;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    LinearLayout contentView;
-    ImageView menuIcon, notification;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    Button open, unseen;
-    private MyDatabaseHelper dbHelper;
+    // Constants
+    private static final int CAMERA_PERMISSION_CODE = 100; // Code for camera permission request
+    static final float END_SCALE = 0.7f; // Scale factor for navigation drawer animation
+
+    // Instance variables
+    private CodeScanner mCodeScanner; // CodeScanner object for scanning QR codes
+    CodeScannerView scannerView; // View for the code scanner
+    TextView scanner_text; // TextView to display scanned result
+    String personName, personEmail; // Variables to hold user's name and email
+    DrawerLayout drawerLayout; // Layout for the navigation drawer
+    NavigationView navigationView; // Navigation view for menu items
+    LinearLayout contentView; // Main content layout
+    ImageView menuIcon, notification; // Menu and notification icons
+    GoogleSignInOptions gso; // Google Sign-In options
+    GoogleSignInClient gsc; // Google Sign-In client
+    Button open, unseen; // Buttons for opening URL and displaying unseen announcements
+    private MyDatabaseHelper dbHelper; // Database helper for Firebase interactions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_check_in);
-        dbHelper = new MyDatabaseHelper();
+        dbHelper = new MyDatabaseHelper(); // Initialize database helper
 
+        // Hide the action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Hooks
+        // Hooks to link layout components
         scannerView = findViewById(R.id.scanner_view);
         scanner_text = findViewById(R.id.scanner_text);
-
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         contentView = findViewById(R.id.content);
@@ -74,15 +77,18 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
         open = findViewById(R.id.open_url);
         unseen = findViewById(R.id.unseen);
 
+        // Configure Google Sign-In options
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
+        // Get the last signed-in user's account information
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct != null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+        if (acct != null) {
+            personName = acct.getDisplayName(); // Get user's display name
+            personEmail = acct.getEmail(); // Get user's email
         }
 
+        // Retrieve seen announcement status from the database
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -90,10 +96,10 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE); // Hide unseen button if announcement has been seen
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button if no data is found
                     }
                 } catch (Exception e) {
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
@@ -107,118 +113,127 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
         });
 
         // Check if the camera permission is granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Request the camera permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Request the camera permission if not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
         } else {
-            // Permission is already granted, initialize the scanner
+            // If permission is granted, initialize the scanner
             initializeScanner();
         }
 
+        // Set click listener for notification button
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(QR_check_in.this, Announcement_Page.class));
+                startActivity(new Intent(QR_check_in.this, Announcement_Page.class)); // Open announcement page
             }
         });
 
+        // Set click listener for unseen button
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(QR_check_in.this, Announcement_Page.class));
+                startActivity(new Intent(QR_check_in.this, Announcement_Page.class)); // Open announcement page
             }
         });
 
+        // Set click listener for open URL button
         open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Uri open_url = Uri.parse(scanner_text.getText().toString());
-                    Intent intent = new Intent(Intent.ACTION_VIEW, open_url);
-                    startActivity(intent);
-                } catch (Exception e){
-                    Toast.makeText(QR_check_in.this, "Unable to load URL", Toast.LENGTH_SHORT).show();
+                    Uri open_url = Uri.parse(scanner_text.getText().toString()); // Parse URL from scanned text
+                    Intent intent = new Intent(Intent.ACTION_VIEW, open_url); // Create an intent to view the URL
+                    startActivity(intent); // Start the intent
+                } catch (Exception e) {
+                    Toast.makeText(QR_check_in.this, "Unable to load URL", Toast.LENGTH_SHORT).show(); // Show error message if URL fails to load
                 }
             }
         });
 
+        // Initialize the navigation drawer
         navigationDrawer();
     }
 
-    //Navigation Drawer Functions
+    // Handle back button press to close the drawer if it's open
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer
+        } else {
+            super.onBackPressed(); // Otherwise, handle default back action
         }
-        else super.onBackPressed();
     }
 
+    // Initialize the QR code scanner
     private void initializeScanner() {
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setDecodeCallback(new DecodeCallback() {
+        mCodeScanner = new CodeScanner(this, scannerView); // Create CodeScanner instance
+        mCodeScanner.setDecodeCallback(new DecodeCallback() { // Set decode callback to handle scanned results
             @Override
             public void onDecoded(@NonNull final Result result) {
-                runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() { // Ensure UI updates happen on the main thread
                     @Override
                     public void run() {
-                        scanner_text.setText(result.getText());
-                        mCodeScanner.startPreview();
+                        scanner_text.setText(result.getText()); // Set the scanned text to the TextView
+                        mCodeScanner.startPreview(); // Restart the scanner preview
                     }
                 });
             }
         });
     }
 
+    // Handle permission request results
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted, initialize the scanner
+                // If permission was granted, initialize the scanner
                 initializeScanner();
             } else {
-                // Permission was denied, show a message or take other actions
+                // If permission was denied, show a message
                 Toast.makeText(this, "Camera permission is required to scan QR codes.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    // Set up the navigation drawer
     private void navigationDrawer() {
-        //Navigation Drawer
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_qr_sign_in);
+        navigationView.bringToFront(); // Bring the navigation view to the front
+        navigationView.setNavigationItemSelectedListener(this); // Set item selection listener
+        navigationView.setCheckedItem(R.id.nav_qr_sign_in); // Check the current menu item
 
+        // Set click listener for the menu icon
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer if it's visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START); // Open the drawer if it's not visible
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
 
-        animateNavigationDrawer();
+        animateNavigationDrawer(); // Start the navigation drawer animation
     }
 
+    // Animate the navigation drawer
     private void animateNavigationDrawer() {
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                final float diffScaleOffset = slideOffset * (1 - END_SCALE);
-                final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
+                final float diffScaleOffset = slideOffset * (1 - END_SCALE); // Calculate the difference in scale
+                final float offsetScale = 1 - diffScaleOffset; // Calculate the new scale
+                contentView.setScaleX(offsetScale); // Set the scale for the content view
                 contentView.setScaleY(offsetScale);
 
-                final float xOffset = drawerView.getWidth() * slideOffset;
-                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
-                final float xTranslation = xOffset - xOffsetDiff;
-                contentView.setTranslationX(xTranslation);
+                final float xOffset = drawerView.getWidth() * slideOffset; // Calculate X offset for translation
+                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2; // Calculate the difference in offset
+                final float xTranslation = xOffset - xOffsetDiff; // Calculate final X translation
+                contentView.setTranslationX(xTranslation); // Apply translation to the content view
             }
         });
     }
@@ -227,18 +242,19 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
     protected void onResume() {
         super.onResume();
         if (mCodeScanner != null) {
-            mCodeScanner.startPreview();
+            mCodeScanner.startPreview(); // Start the scanner preview when resuming the activity
         }
     }
 
     @Override
     protected void onPause() {
         if (mCodeScanner != null) {
-            mCodeScanner.releaseResources();
+            mCodeScanner.releaseResources(); // Release scanner resources when pausing the activity
         }
         super.onPause();
     }
 
+    // Handle navigation item selection
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if(item.toString().equals("Home")){

@@ -28,10 +28,17 @@ import com.squareup.picasso.Picasso;
 
 public class About_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    static final float END_SCALE = 0.7f;
+    // Constants
+    static final float END_SCALE = 0.7f;  // Scale factor for contentView when the navigation drawer is opened
+
+    // User information
     String personName, personEmail;
+
+    // Google sign-in options and client
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
+
+    // UI components
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     LinearLayout contentView;
@@ -44,13 +51,16 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
+
+        // Initialize database helper
         dbHelper = new MyDatabaseHelper();
 
+        // Hide the default ActionBar to give a full-screen view
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Hooks
+        // Initialize all the UI components (hooks)
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         contentView = findViewById(R.id.content);
@@ -60,26 +70,30 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
         para = findViewById(R.id.para);
         unseen = findViewById(R.id.unseen);
 
+        // Setup Google Sign-In options to request user's email
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
 
+        // Get the last signed-in Google account, if available
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+        if (acct != null) {
+            personName = acct.getDisplayName();  // Get the user's name
+            personEmail = acct.getEmail();       // Get the user's email
         }
 
+        // Check if the user has seen the latest announcement
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
+                    // If seenStatus exists, hide the "unseen" button
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE);  // Hide the unseen button
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE);  // Show the unseen button
                     }
                 } catch (Exception e) {
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
@@ -88,10 +102,12 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Log any error that occurs while retrieving the announcement status
                 System.out.println("Failed to retrieve SeenAnnouncement status: " + databaseError.getMessage());
             }
         });
 
+        // Set the descriptive text for the About page (conference details)
         para.setText("The Australasian Conference on Information Systems (ACIS 2024) will be hosted " +
                 "at Canberra the capital of Australia from 4 December to 6 December 2024. Canberra meaning " +
                 "“the meeting place” in the local Ngunnawal language, is one of the world’s most sustainable " +
@@ -99,12 +115,14 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
                 "about how digital technologies can promote sustainability and facilitate a resilient " +
                 "economy that works for the common good.");
 
+        // Load the conference image using Picasso and handle any error with a default error image
         String imageUrl = "https://acis.aaisnet.org/acis2024/wp-content/uploads/2024/07/ACIS2024-digital-banner-e1720404776215.jpg";
         Picasso.get()
                 .load(imageUrl)
                 .error(R.drawable.baseline_error_24) // Optional: error image if loading fails
                 .into(image);
 
+        // Set click listener on the notification icon to navigate to the Announcement Page
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +130,7 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
             }
         });
 
+        // Set click listener on the "unseen" button to open the Announcement Page
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,47 +138,55 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
             }
         });
 
+        // Initialize the navigation drawer
         navigationDrawer();
     }
 
-    //Navigation Drawer Functions
+    // Handle back press action to close the navigation drawer if it's open
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);  // Close the drawer if visible
+        } else {
+            super.onBackPressed();  // Proceed with the default back press action
         }
-        else super.onBackPressed();
     }
 
+    // Method to initialize and handle the navigation drawer
     private void navigationDrawer() {
-
-        //Navigation Drawer
+        // Bring the navigation view to the front and set its item selected listener
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_about);
+        navigationView.setCheckedItem(R.id.nav_about);  // Highlight the current page in the drawer
 
+        // Handle menu icon click to open/close the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);  // Close drawer if visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);  // Open drawer if hidden
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
 
+        // Add animation to the navigation drawer
         animateNavigationDrawer();
     }
 
+    // Method to animate the navigation drawer opening and closing
     private void animateNavigationDrawer() {
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Apply scaling and translation effect on the content view as the drawer slides
                 final float diffScaleOffset = slideOffset * (1 - END_SCALE);
                 final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                contentView.setScaleX(offsetScale);  // Scale X-axis
+                contentView.setScaleY(offsetScale);  // Scale Y-axis
 
+                // Translate content view to the right as the drawer opens
                 final float xOffset = drawerView.getWidth() * slideOffset;
                 final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
                 final float xTranslation = xOffset - xOffsetDiff;
@@ -168,27 +195,30 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
         });
     }
 
+    // Handle item selection in the navigation drawer
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if(item.toString().equals("Home")){
+        // Navigate to the appropriate activity based on the selected item
+        if (item.toString().equals("Home")) {
             startActivity(new Intent(About_Page.this, Home_Page.class));
         }
-        if(item.toString().equals("Sessions")){
+        if (item.toString().equals("Sessions")) {
             startActivity(new Intent(About_Page.this, Session_Page.class));
         }
-        if(item.toString().equals("QR Check-In")){
+        if (item.toString().equals("QR Check-In")) {
             startActivity(new Intent(About_Page.this, QR_check_in.class));
         }
-        if(item.toString().equals("Site Map")){
+        if (item.toString().equals("Site Map")) {
             startActivity(new Intent(About_Page.this, Site_Map_Page.class));
         }
-        if(item.toString().equals("Committee")){
+        if (item.toString().equals("Committee")) {
             startActivity(new Intent(About_Page.this, Organising_Committee_Page.class));
         }
-        if(item.toString().equals("Chat")){
+        if (item.toString().equals("Chat")) {
             startActivity(new Intent(About_Page.this, Group_Chat_Page.class));
         }
-        if(item.toString().equals("Sign Out")){
+        if (item.toString().equals("Sign Out")) {
+            // Sign out the user and navigate to the Google Sign-In page
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -197,6 +227,6 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
                 }
             });
         }
-        return true;
+        return true;  // Indicate that the item selection has been handled
     }
 }

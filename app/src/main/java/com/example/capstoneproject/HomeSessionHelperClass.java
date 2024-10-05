@@ -1,28 +1,37 @@
 package com.example.capstoneproject;
 
 public class HomeSessionHelperClass {
-    String subject, date, time, track;
+    // Member variables to hold session details
+    String subject; // Subject of the session
+    String date;    // Date of the session
+    String time;    // Time of the session
+    String track;   // Track of the session
 
+    // Constructor to initialize session details
     public HomeSessionHelperClass(String subject, String date, String time, String track) {
-        this.subject = subject;
-        this.date = date;
-        this.time = time;
-        this.track = track;
+        this.subject = subject; // Assign subject
+        this.date = date;       // Assign date
+        this.time = time;       // Assign time
+        this.track = track;     // Assign track
     }
 
+    // Getter method for subject
     public String getSubject() {
-        return subject;
+        return subject; // Return the subject
     }
 
+    // Getter method for date
     public String getDate() {
-        return date;
+        return date; // Return the date
     }
 
+    // Getter method for time
     public String getTime() {
-        return time;
+        return time; // Return the time
     }
 
+    // Getter method for track
     public String getTrack() {
-        return track;
+        return track; // Return the track
     }
 }

@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyDatabaseHelper {
+    // Database reference for Firebase Realtime Database
     private final DatabaseReference dbRef;
 
+    // Constructor to initialize the database reference
     public MyDatabaseHelper() {
         // Initialize the Firebase Database reference
         dbRef = FirebaseDatabase.getInstance("https://capstone2024uc-e385c-default-rtdb.firebaseio.com/")
@@ -27,23 +29,28 @@ public class MyDatabaseHelper {
 
     // Callback interface for sessions retrieval
     public interface SessionsRetrievalCallback {
-        void onEventsRetrieved(List<Session> sessions);
-        void onError(Exception e);
+        void onEventsRetrieved(List<Session> sessions); // Called when sessions are retrieved
+        void onError(Exception e); // Called on error
     }
 
     // Callback interface for data retrieval
     public interface DataRetrievalCallback {
-        void onDataRetrieved(List<Announcement> announcements);
-        void onError(Exception e);
+        void onDataRetrieved(List<Announcement> announcements); // Called when announcements are retrieved
+        void onError(Exception e); // Called on error
     }
 
     public interface FirstHelperClassRetrievalCallback {
-        void onDataRetrieved(List<ChatPageHelperClass> chatPageHelperClasses);
+        void onDataRetrieved(List<ChatPageHelperClass> chatPageHelperClasses); // Called when chats (messages) are retrieved
+        void onError(Exception e); // Called on error
+    }
+
+    public interface ImageUrlCallback {
+        void onImageUrlRetrieved(String imageUrl); // Called when image urls are retrieved
         void onError(Exception e);
     }
 
-    // Insert data method with category, key, and value under the email
-    public void insertData(String category, List<Announcement> announcements) {
+    // Send data method with category, key, and value
+    public void addAnnouncement(String category, List<Announcement> announcements) {
         // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child(category);
 
@@ -57,8 +64,8 @@ public class MyDatabaseHelper {
         }
     }
 
-    // Retrieve all keys and values under a specific email and category with a callback
-    public void getData(String category, DataRetrievalCallback callback) {
+    // Retrieve all keys and values under Announcement category with a callback
+    public void getAnnouncements(String category, DataRetrievalCallback callback) {
         // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child(category);
 
@@ -92,6 +99,7 @@ public class MyDatabaseHelper {
         });
     }
 
+    // Delete an announcement by matching title, description, and dateTime
     public void deleteAnnouncement(String title, String description, String dateTime) {
         // Reference to the "Announcement" node in Firebase
         DatabaseReference announcementsRef = dbRef.child("Announcement");
@@ -129,7 +137,8 @@ public class MyDatabaseHelper {
         });
     }
 
-    public void sendSession(List<Session> sessions) {
+    // Send session details to the Firebase
+    public void addSession(List<Session> sessions) {
         // Reference to the "Session" node under the specified email
         DatabaseReference emailRef = dbRef.child("Session");
 
@@ -157,7 +166,7 @@ public class MyDatabaseHelper {
         }
     }
 
-    // Fetch sessions method
+    // Fetch session details from the Firebase
     public void getSessions(SessionsRetrievalCallback callback) {
         // Reference to the "Session" node
         DatabaseReference emailRef = dbRef.child("Session");
@@ -245,6 +254,7 @@ public class MyDatabaseHelper {
         });
     }
 
+    // Delete sessions details from the Firebase
     public void deleteSession(String sessionName, String sessionDate, String startTime, String endTime, String sessionChair) {
         // Reference to the "Session" node
         DatabaseReference sessionsRef = dbRef.child("Session");
@@ -284,6 +294,7 @@ public class MyDatabaseHelper {
         });
     }
 
+    // Send user email and a boolean true if the user has seen the latest announcements
     public void sendSeenAnnouncement(String email, boolean seen) {
         // Replace '.' in email with ',' since Firebase keys can't contain '.'
         String sanitizedEmail = email.replace(".", ",");
@@ -302,6 +313,7 @@ public class MyDatabaseHelper {
                 });
     }
 
+    // Fetch the emails of the users who have seen the latest announcements
     public void getSeenAnnouncement(String email, ValueEventListener listener) {
         try {
             // Replace '.' in email with ',' since Firebase keys can't contain '.'
@@ -317,6 +329,7 @@ public class MyDatabaseHelper {
         }
     }
 
+    // Empty the list of users who have seen the latest announcements
     public void removeAllSeenAnnouncements() {
         try {
             // Reference to the "AnnouncementSeen" node
@@ -336,7 +349,8 @@ public class MyDatabaseHelper {
         }
     }
 
-    public void insertMessage(String name, String email, String conversationText, String dateTime) {
+    // Send message to the Firebase
+    public void addMessage(String name, String email, String conversationText, String dateTime) {
         DatabaseReference conversationsRef = dbRef.child("General").push(); // Create a new key under "General"
 
         String id = conversationsRef.getKey(); // Generate a unique ID for the message
@@ -348,7 +362,8 @@ public class MyDatabaseHelper {
         conversationsRef.child("isHeader").setValue(false); // Explicitly mark as not a header
     }
 
-    public void insertHeader(String date) {
+    // Send header (date) to the Firebase
+    public void addHeader(String date) {
         DatabaseReference headerRef = dbRef.child("General").push();
         String id = headerRef.getKey();
         headerRef.child("id").setValue(id);
@@ -357,6 +372,7 @@ public class MyDatabaseHelper {
         Log.d("DatabaseHelper", "Header inserted: " + date);
     }
 
+    // Fetch conversation (messages) from the Firebase
     public void getConversations(FirstHelperClassRetrievalCallback callback) {
         DatabaseReference conversationsRef = dbRef.child("General");
 
@@ -404,6 +420,7 @@ public class MyDatabaseHelper {
         });
     }
 
+    // Send user name, email and profile image url to the Firebase
     public void saveUserDataWithImageUrl(String personEmail, String personName, String imageUrl) {
         String sanitizedEmail = personEmail.replace(".", ",");
         // Reference to the Firebase Realtime Database
@@ -415,6 +432,7 @@ public class MyDatabaseHelper {
         dbRef.child("url").setValue(imageUrl); // The image URL already available
     }
 
+    // Fetch the image url from the Firebase
     public void getUserImageUrl(String email, ImageUrlCallback callback) {
         // Replace '.' with '_' in the email to match the Firebase key format
         String sanitizedEmail = email.replace(".", ",");
@@ -438,10 +456,5 @@ public class MyDatabaseHelper {
                 callback.onError(databaseError.toException());
             }
         });
-    }
-
-    public interface ImageUrlCallback {
-        void onImageUrlRetrieved(String imageUrl);
-        void onError(Exception e);
     }
 }

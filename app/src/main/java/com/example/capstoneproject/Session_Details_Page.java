@@ -54,136 +54,190 @@ import java.util.List;
 
 public class Session_Details_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+    // Request code for starting an activity for a result
     private static final int REQUEST_CODE = 1001;
-    String personName, personEmail, title, session_address, selected_track, session_location,
-            text_chair, paper1_name, paper2_name, paper3_name, paper4_name = "";
-    LocalDate session_date;
-    boolean sessionExists;
+
+    // Variables to hold information about a person and the session
+    String personName; // Name of the person
+    String personEmail; // Email of the person
+    String title; // Title of the session
+    String session_address; // Address of the session
+    String selected_track; // Track selected for the session
+    String session_location; // Location where the session will occur
+    String text_chair; // Chairperson's name for the session
+    String paper1_name, paper2_name, paper3_name, paper4_name = ""; // Names of up to four papers associated with the session
+    LocalDate session_date; // Date of the session
+    boolean sessionExists; // Flag indicating if the session exists
+
+    // Flags indicating if papers are present for the session
     boolean paper2_isPresent, paper3_isPresent, paper4_isPresent = false;
+
+    // Variables to hold the start and end times of the session
     long start_time, end_time;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    ImageView menuIcon, favorite, delete, notification;
-    Button unseen;
+
+    // UI elements for the navigation drawer and its components
+    DrawerLayout drawerLayout; // Layout for the navigation drawer
+    NavigationView navigationView; // Navigation view for drawer items
+    ImageView menuIcon, favorite, delete, notification; // Icons for menu, favorites, delete action, and notifications
+    Button unseen; // Button for unseen actions
+
+    // ImageButtons for downloading papers
     ImageButton paper1_download, paper2_download, paper3_download, paper4_download;
-    LinearLayout contentView;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    TextView session_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4;
-    Uri paper1_uri, paper2_uri, paper3_uri, paper4_uri;
-    LinearLayout layout2, layout3, layout4;
-    private MyDatabaseHelper dbHelper;
-    private Handler handler = new Handler(Looper.getMainLooper());
-    private Runnable checkSessionRunnable;
+
+    // Content view layout for the session details
+    LinearLayout contentView; // Linear layout for the content display
+
+    // Google Sign-In options and client
+    GoogleSignInOptions gso; // Google Sign-In options configuration
+    GoogleSignInClient gsc; // Client for Google Sign-In
+
+    // TextViews for displaying session details
+    TextView session_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4; // Text views for various session attributes
+
+    // URIs for accessing paper documents
+    Uri paper1_uri, paper2_uri, paper3_uri, paper4_uri; // URIs for each paper
+
+    // Layouts for displaying additional content for each paper
+    LinearLayout layout2, layout3, layout4; // Layouts for paper details
+
+    // Database helper for managing session data
+    private MyDatabaseHelper dbHelper; // Database helper for session operations
+
+    // Handler and runnable for managing background tasks on the main thread
+    private Handler handler = new Handler(Looper.getMainLooper()); // Handler to post tasks to the main thread
+    private Runnable checkSessionRunnable; // Runnable for checking session existence
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_details_page);
-        dbHelper = new MyDatabaseHelper();
+        dbHelper = new MyDatabaseHelper(); // Initialize database helper
 
+        // Runnable to periodically check if the session exists in the user's calendar
         checkSessionRunnable = new Runnable() {
             @Override
             public void run() {
+                // Check if the session is in the calendar based on its title and timings
                 sessionExists = isSessionInCalendar(title, start_time, end_time);
+
+                // If the session exists, change the favorite icon to indicate it
                 if (sessionExists) {
                     favorite.setImageResource(R.drawable.baseline_favorite_24);
                 }
+
                 // Re-run the check every 1 second (1000 milliseconds)
                 handler.postDelayed(this, 1000);
             }
         };
 
+// Hide the action bar if it is present
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        session_name = findViewById(R.id.session_name);
-        track = findViewById(R.id.track);
-        date = findViewById(R.id.date);
-        time = findViewById(R.id.time);
-        location = findViewById(R.id.location);
-        address = findViewById(R.id.address);
-        chair = findViewById(R.id.person);
-        paper1 = findViewById(R.id.paper1);
-        paper2 = findViewById(R.id.paper2);
-        paper3 = findViewById(R.id.paper3);
-        paper4 = findViewById(R.id.paper4);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
-        menuIcon = findViewById(R.id.menu_icon);
-        contentView = findViewById(R.id.content);
-        favorite = findViewById(R.id.favorite);
-        delete = findViewById(R.id.delete);
-        notification = findViewById(R.id.notification);
-        unseen = findViewById(R.id.unseen);
+// Initialize UI elements by finding them by their IDs
+        session_name = findViewById(R.id.session_name); // TextView for session name
+        track = findViewById(R.id.track); // TextView for the track of the session
+        date = findViewById(R.id.date); // TextView for the session date
+        time = findViewById(R.id.time); // TextView for the session time
+        location = findViewById(R.id.location); // TextView for session location
+        address = findViewById(R.id.address); // TextView for session address
+        chair = findViewById(R.id.person); // TextView for the chairperson's name
+        paper1 = findViewById(R.id.paper1); // TextView for the first paper's name
+        paper2 = findViewById(R.id.paper2); // TextView for the second paper's name
+        paper3 = findViewById(R.id.paper3); // TextView for the third paper's name
+        paper4 = findViewById(R.id.paper4); // TextView for the fourth paper's name
+        drawerLayout = findViewById(R.id.drawer_layout); // DrawerLayout for navigation drawer
+        navigationView = findViewById(R.id.navigation_view); // NavigationView for drawer items
+        menuIcon = findViewById(R.id.menu_icon); // ImageView for the menu icon
+        contentView = findViewById(R.id.content); // LinearLayout for content display
+        favorite = findViewById(R.id.favorite); // ImageView for favorite action
+        delete = findViewById(R.id.delete); // ImageView for delete action
+        notification = findViewById(R.id.notification); // ImageView for notifications
+        unseen = findViewById(R.id.unseen); // Button for unseen announcements
 
-        paper1_download = findViewById(R.id.paper1_download);
-        paper2_download = findViewById(R.id.paper2_download);
-        paper3_download = findViewById(R.id.paper3_download);
-        paper4_download = findViewById(R.id.paper4_download);
+// Initialize ImageButtons for downloading papers
+        paper1_download = findViewById(R.id.paper1_download); // ImageButton for downloading the first paper
+        paper2_download = findViewById(R.id.paper2_download); // ImageButton for downloading the second paper
+        paper3_download = findViewById(R.id.paper3_download); // ImageButton for downloading the third paper
+        paper4_download = findViewById(R.id.paper4_download); // ImageButton for downloading the fourth paper
 
-        layout2 = findViewById(R.id.layout2);
-        layout3 = findViewById(R.id.layout3);
-        layout4 = findViewById(R.id.layout4);
+// Initialize layouts for displaying additional content for papers
+        layout2 = findViewById(R.id.layout2); // Layout for the second paper
+        layout3 = findViewById(R.id.layout3); // Layout for the third paper
+        layout4 = findViewById(R.id.layout4); // Layout for the fourth paper
 
+// Set up Google Sign-In options
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
+        gsc = GoogleSignIn.getClient(this, gso); // Get GoogleSignInClient
 
+// Get the last signed-in account
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct != null){
+        if (acct != null) {
+            // Retrieve the display name and email of the signed-in user
             personName = acct.getDisplayName();
             personEmail = acct.getEmail();
 
+            // If the user's email matches a specific address, show the delete button
             if (personEmail.equals("guptasdhuruv4@gmail.com")) {
                 delete.setVisibility(View.VISIBLE);
             }
         }
 
+        // Retrieve seen announcement status from the database
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
+                    // Check if the data snapshot exists
                     if (dataSnapshot.exists()) {
                         String seenStatus = dataSnapshot.getValue(String.class);
                         if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                            unseen.setVisibility(View.GONE); // Hide unseen button if status is present
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button if no status
                     }
                 } catch (Exception e) {
+                    // Handle any errors that occur during the data processing
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors when retrieving the announcement status
                 System.out.println("Failed to retrieve SeenAnnouncement status: " + databaseError.getMessage());
             }
         });
 
+        // Set up delete button click listener
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show a confirmation dialog for deletion
                 showDeleteConfirmationDialog();
             }
         });
 
+        // Set up favorite button click listener
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
+                // Check if calendar permissions are granted
                 if (ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
                         ContextCompat.checkSelfPermission(Session_Details_Page.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-                    // If not, request the permissions
+                    // If not granted, request calendar permissions
                     ActivityCompat.requestPermissions(Session_Details_Page.this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
                 } else {
+                    // If the session does not exist, create a new calendar event
                     if (!sessionExists) {
                         Intent intent = new Intent(Intent.ACTION_INSERT);
-                        intent.setData(CalendarContract.Events.CONTENT_URI);
-                        intent.putExtra(CalendarContract.Events.TITLE, title);
-                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, session_location);
+                        intent.setData(CalendarContract.Events.CONTENT_URI); // Set URI for calendar events
+                        intent.putExtra(CalendarContract.Events.TITLE, title); // Set event title
+                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, session_location); // Set event location
+
+                        // Build event description based on which papers are present
                         if (paper2_isPresent && paper3_isPresent && paper4_isPresent) {
                             intent.putExtra(CalendarContract.Events.DESCRIPTION, "Track: " + selected_track + "\n"
                                     + "Session Chair: " + text_chair + "\n"
@@ -208,33 +262,41 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                                     + "Paper Details:\n 1. " + paper1_name);
                         }
 
+                        // Set the event start and end time
                         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start_time);
                         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end_time);
 
+                        // Check if there is an app to handle the intent
                         if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
+                            startActivity(intent); // Start the intent to create the event
+                            // Check if the session now exists in the calendar after insertion
                             sessionExists = isSessionInCalendar(title, start_time, end_time);
                             if (sessionExists) {
-                                favorite.setImageResource(R.drawable.baseline_favorite_24);
-                                Toast.makeText(Session_Details_Page.this, "Favourite Session!", Toast.LENGTH_SHORT).show();
+                                favorite.setImageResource(R.drawable.baseline_favorite_24); // Update favorite icon
+                                Toast.makeText(Session_Details_Page.this, "Favourite Session!", Toast.LENGTH_SHORT).show(); // Show success message
                             }
                         } else {
-                            Toast.makeText(Session_Details_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Session_Details_Page.this, "There is no app that can support this action", Toast.LENGTH_SHORT).show(); // Show error message if no app can handle the action
                         }
                     } else {
+                        // If the session already exists, remove it from the calendar
                         removeSessionFromCalendar();
                     }
                 }
             }
         });
 
+        // Set up notification button click listener
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Session_Details_Page.this, Announcement_Page.class));
+                // Start NotificationActivity to handle notifications
+                Intent intent = new Intent(Session_Details_Page.this, Announcement_Page.class);
+                startActivity(intent); // Start the notification activity
             }
         });
 
+        // Set up unseen button click listener
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -363,102 +425,118 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             });
         }
 
+        // Set an onClickListener for the paper1 download button
         paper1_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Create an intent to view the URL of paper1
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper1_uri);
-                    startActivity(intent);
+                    startActivity(intent); // Start the activity to open the URL
                 } catch (Exception e){
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+// Set an onClickListener for the paper2 download button
         paper2_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Create an intent to view the URL of paper2
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper2_uri);
-                    startActivity(intent);
+                    startActivity(intent); // Start the activity to open the URL
                 } catch (Exception e){
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+// Set an onClickListener for the paper3 download button
         paper3_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Create an intent to view the URL of paper3
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper3_uri);
-                    startActivity(intent);
+                    startActivity(intent); // Start the activity to open the URL
                 } catch (Exception e){
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+// Set an onClickListener for the paper4 download button
         paper4_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Create an intent to view the URL of paper4
                     Intent intent = new Intent(Intent.ACTION_VIEW, paper4_uri);
-                    startActivity(intent);
+                    startActivity(intent); // Start the activity to open the URL
                 } catch (Exception e){
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Session_Details_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
+// Check if the READ_CALENDAR and WRITE_CALENDAR permissions are granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // If not, request the permissions
+            // If permissions are not granted, request them
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, REQUEST_CODE);
         } else {
-            // Permissions are already granted, check session existence
+            // Permissions are already granted, check if the session exists in the calendar
             sessionExists = isSessionInCalendar(title, start_time, end_time);
             if (sessionExists) {
+                // If session exists, set favorite icon and show a toast message
                 favorite.setImageResource(R.drawable.baseline_favorite_24);
                 Toast.makeText(this, "Favourite Session!", Toast.LENGTH_SHORT).show();
             }
         }
 
+// Call the method to set up the navigation drawer
         navigationDrawer();
     }
 
+    // Override onDestroy to clean up resources
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Remove callbacks to prevent memory leaks
+        // Remove callbacks to prevent memory leaks from the handler
         handler.removeCallbacks(checkSessionRunnable);
     }
 
+    // Show a confirmation dialog before deleting a session
     private void showDeleteConfirmationDialog() {
-        // Create a Date object from the timestamp
+        // Create Date objects for start and end times
         Date startTime = new Date(start_time);
         Date endTime = new Date(end_time);
 
-        // Use SimpleDateFormat to format the date object to "HH:mm"
+        // Format the time to "HH:mm" using SimpleDateFormat
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
-        // Return the formatted time string
+        // Format the start and end times to strings
         String start = sdf.format(startTime);
         String end = sdf.format(endTime);
 
-        // Inflate the custom layout
+        // Inflate the custom layout for the dialog
         LayoutInflater inflater = LayoutInflater.from(Session_Details_Page.this);
         View dialogView = inflater.inflate(R.layout.dialog_confirmation, null);
 
-        // Initialize the custom views
+        // Initialize the custom views in the dialog layout
         TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
         Button cancelButton = dialogView.findViewById(R.id.btn_cancel);
         Button confirmButton = dialogView.findViewById(R.id.btn_confirm);
 
+        // Set the message in the dialog based on available papers
         if (paper1_name != null && paper2_name != null &&
                 paper3_name != null && paper4_name != null){
-            // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
                     "\n\nSession Name: " + title +
                     "\nLocation: " + session_address + " " + session_location +
@@ -470,7 +548,6 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         }
         else if (paper1_name != null && paper2_name != null &&
                 paper3_name != null){
-            // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
                     "\n\nSession Name: " + title +
                     "\nLocation: " + session_address + " " + session_location +
@@ -480,7 +557,6 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name + "\n\t\t3. " + paper3_name);
         }
         else if (paper1_name != null && paper2_name != null){
-            // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
                     "\n\nSession Name: " + title +
                     "\nLocation: " + session_address + " " + session_location +
@@ -490,7 +566,6 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                     "\nPapers:\n\t\t1. " + paper1_name + "\n\t\t2. " + paper2_name);
         }
         else if (paper1_name != null){
-            // Set dialog message
             messageTextView.setText("Are you sure you want to delete this Conference?" +
                     "\n\nSession Name: " + title +
                     "\nLocation: " + session_address + " " + session_location +
@@ -500,12 +575,12 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                     "\nPapers:\n\t\t1. " + paper1_name);
         }
 
-        // Create and show the dialog
+        // Create and show the dialog using AlertDialog.Builder
         AlertDialog.Builder builder = new AlertDialog.Builder(Session_Details_Page.this);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
 
-        // Set click listeners for the buttons
+        // Set click listeners for the cancel and confirm buttons
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -516,16 +591,21 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Delete the session from the database
                 dbHelper.deleteSession(title, String.valueOf(session_date), start, end, text_chair);
                 dialog.dismiss(); // Close dialog after confirming
+                // Redirect to the Session_Page activity
                 startActivity(new Intent(Session_Details_Page.this, Session_Page.class));
             }
         });
 
+        // Show the dialog
         dialog.show();
     }
 
+    // Check if a session exists in the calendar
     public boolean isSessionInCalendar(String sessionTitle, long startTime, long endTime) {
+        // Define the projection for the query
         String[] proj =
                 new String[]{
                         Instances._ID,
@@ -534,98 +614,114 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                         Instances.EVENT_ID};
         boolean sessionExists;
         try (Cursor cursor = Instances.query(getContentResolver(), proj, startTime, endTime, sessionTitle)) {
-            sessionExists = false;
+            sessionExists = false; // Initialize sessionExists to false
             if (cursor.getCount() > 0) {
-                sessionExists = true;
+                sessionExists = true; // If records found, set sessionExists to true
             }
         }
 
-        return sessionExists;
+        return sessionExists; // Return the result
     }
 
+    // Remove a session from the calendar
     @SuppressLint("Range")
     private void removeSessionFromCalendar() {
-        // Retrieve the event ID
+        // Retrieve the event ID for the session
         String[] proj = new String[]{
                 Instances.EVENT_ID
         };
-        long eventId = -1;
+        long eventId = -1; // Initialize eventId to an invalid value
         try (Cursor cursor = Instances.query(getContentResolver(), proj, start_time, end_time, title)) {
             if (cursor.moveToFirst()) {
-                eventId = cursor.getLong(cursor.getColumnIndex(Instances.EVENT_ID));
+                eventId = cursor.getLong(cursor.getColumnIndex(Instances.EVENT_ID)); // Get the event ID
             }
         }
 
+        // If a valid event ID was found, attempt to delete it
         if (eventId != -1) {
             Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
             int rowsDeleted = getContentResolver().delete(deleteUri, null, null);
             if (rowsDeleted > 0) {
+                // Show success message if session is removed
                 Toast.makeText(this, "Session removed from calendar", Toast.LENGTH_SHORT).show();
-                favorite.setImageResource(R.drawable.baseline_favorite_border_24);
-                sessionExists = false;
+                favorite.setImageResource(R.drawable.baseline_favorite_border_24); // Update favorite icon
+                sessionExists = false; // Update session existence status
             } else {
+                // Show failure message if unable to remove session
                 Toast.makeText(this, "Failed to remove session", Toast.LENGTH_SHORT).show();
             }
         } else {
+            // Show message if session not found
             Toast.makeText(this, "Session not found", Toast.LENGTH_SHORT).show();
         }
     }
 
+    // Handle the result of permission requests
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_CODE) {
+            // Check if the permission was granted
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Check if the session exists in the calendar after permission is granted
                 boolean sessionExists = isSessionInCalendar(title, start_time, end_time);
 
                 if (sessionExists) {
-                    favorite.setImageResource(R.drawable.baseline_favorite_24);
-                    Toast.makeText(this, "Favourite Session!", Toast.LENGTH_SHORT).show();
+                    favorite.setImageResource(R.drawable.baseline_favorite_24); // Set favorite icon
+                    Toast.makeText(this, "Favourite Session!", Toast.LENGTH_SHORT).show(); // Show toast message
                 }
 
             } else {
-                // Permission denied, show a message or handle appropriately
+                // Show message if permission is denied
                 Toast.makeText(this, "Permission Denied to Read Calendar", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    //Navigation Drawer Functions
+    // Handle back button press for navigation drawer
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.closeDrawer(GravityCompat.START); // Close drawer if it's open
         }
-        else super.onBackPressed();
+        else super.onBackPressed(); // Default back press behavior
     }
 
+    // Method to initialize and handle the navigation drawer
     private void navigationDrawer() {
-        //Navigation Drawer
+        // Bring the navigation view to the front and set its item selected listener
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Handle menu icon click to open/close the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);  // Close drawer if visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);  // Open drawer if hidden
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
+
+        // Add animation to the navigation drawer
         animateNavigationDrawer();
     }
 
+    // Method to animate the navigation drawer opening and closing
     private void animateNavigationDrawer() {
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Apply scaling and translation effect on the content view as the drawer slides
                 final float diffScaleOffset = slideOffset * (1 - END_SCALE);
                 final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                contentView.setScaleX(offsetScale);  // Scale X-axis
+                contentView.setScaleY(offsetScale);  // Scale Y-axis
 
+                // Translate content view to the right as the drawer opens
                 final float xOffset = drawerView.getWidth() * slideOffset;
                 final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
                 final float xTranslation = xOffset - xOffsetDiff;
@@ -634,8 +730,10 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         });
     }
 
+    // Handle item selection in the navigation drawer
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Navigate to the appropriate activity based on the selected item
         if(item.toString().equals("Home")){
             startActivity(new Intent(Session_Details_Page.this, Home_Page.class));
         }

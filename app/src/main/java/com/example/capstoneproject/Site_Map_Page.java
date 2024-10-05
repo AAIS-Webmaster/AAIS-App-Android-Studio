@@ -29,27 +29,29 @@ import com.squareup.picasso.Picasso;
 
 public class Site_Map_Page extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    static final float END_SCALE = 0.7f;
-    String personName, personEmail;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    LinearLayout contentView;
-    private MyDatabaseHelper dbHelper;
-    ImageView map, menuIcon, notification;
-    Button unseen;
+    static final float END_SCALE = 0.7f; // Scale factor for drawer animation
+    String personName, personEmail; // Variables to store user's name and email
+    GoogleSignInOptions gso; // Google sign-in options
+    GoogleSignInClient gsc; // Google sign-in client
+    DrawerLayout drawerLayout; // Layout for the navigation drawer
+    NavigationView navigationView; // Navigation view for the drawer
+    LinearLayout contentView; // Main content view
+    private MyDatabaseHelper dbHelper; // Database helper for Firebase operations
+    ImageView map, menuIcon, notification; // Image views for map and icons
+    Button unseen; // Button to show unseen announcements
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_site_map_page);
-        dbHelper = new MyDatabaseHelper();
+        super.onCreate(savedInstanceState); // Call the superclass method
+        setContentView(R.layout.activity_site_map_page); // Set the content view to the activity layout
+        dbHelper = new MyDatabaseHelper(); // Initialize the database helper
 
+        // Hide the action bar if it exists
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Hooks
+        // Hooks: Initialize views
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         contentView = findViewById(R.id.content);
@@ -58,26 +60,29 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         map = findViewById(R.id.site_map);
         unseen = findViewById(R.id.unseen);
 
+        // Configure Google Sign-In options
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso); // Get the Google Sign-In client
 
+        // Get the currently signed-in account
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct != null){
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+        if (acct != null) {
+            personName = acct.getDisplayName(); // Store user's display name
+            personEmail = acct.getEmail(); // Store user's email
         }
 
+        // Check for seen announcements in the database
         dbHelper.getSeenAnnouncement(personEmail, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    if (dataSnapshot.exists()) {
+                    if (dataSnapshot.exists()) { // If data exists
                         String seenStatus = dataSnapshot.getValue(String.class);
-                        if (seenStatus != null) {
-                            unseen.setVisibility(View.GONE);
+                        if (seenStatus != null) { // If seen status is retrieved
+                            unseen.setVisibility(View.GONE); // Hide unseen button
                         }
                     } else {
-                        unseen.setVisibility(View.VISIBLE);
+                        unseen.setVisibility(View.VISIBLE); // Show unseen button
                     }
                 } catch (Exception e) {
                     System.out.println("An error occurred while processing SeenAnnouncement status: " + e.getMessage());
@@ -90,116 +95,127 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
             }
         });
 
+        // Load the site map image using Picasso
         String imageUrl = "https://www.canberra.edu.au/__data/assets/image/0009/1613709/UCEM0093_UCMapsUpdate2020_Main_201207.png";
         Picasso.get()
-                .load(imageUrl)
+                .load(imageUrl) // Load the image from the URL
                 .error(R.drawable.baseline_error_24) // Error image if loading fails
-                .into(map);
+                .into(map); // Set the loaded image into the ImageView
 
+        // Set an OnClickListener for the map image
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    // Open the site map URL in a web browser
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.canberra.edu.au/maps"));
                     startActivity(intent);
-                } catch (Exception e){
+                } catch (Exception e) {
+                    // Show a toast message if unable to load the URL
                     Toast.makeText(Site_Map_Page.this, "Unable to load Paper URL", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        // Set OnClickListener for the notification icon
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Site_Map_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Site_Map_Page.this, Announcement_Page.class)); // Navigate to Announcement Page
             }
         });
 
+        // Set OnClickListener for the unseen button
         unseen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Site_Map_Page.this, Announcement_Page.class));
+                startActivity(new Intent(Site_Map_Page.this, Announcement_Page.class)); // Navigate to Announcement Page
             }
         });
 
-        navigationDrawer();
+        navigationDrawer(); // Initialize the navigation drawer
     }
 
-    // Navigation Drawer Functions
+    // Handle back press to close the drawer if it's open
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer if it's visible
+        } else {
+            super.onBackPressed(); // Otherwise, call the superclass method
         }
-        else super.onBackPressed();
     }
 
     private void navigationDrawer() {
+        // Initialize the navigation drawer
+        navigationView.bringToFront(); // Bring the navigation view to the front
+        navigationView.setNavigationItemSelectedListener(this); // Set the navigation item selected listener
+        navigationView.setCheckedItem(R.id.nav_site_map); // Set the current item in the drawer
 
-        //Navigation Drawer
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_site_map);
-
+        // Set OnClickListener for the menu icon to toggle the drawer
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer if it's visible
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START); // Open the drawer if it's not visible
                 }
-                else{drawerLayout.openDrawer(GravityCompat.START);}
             }
         });
 
-        animateNavigationDrawer();
+        animateNavigationDrawer(); // Start the drawer animation
     }
 
     private void animateNavigationDrawer() {
+        // Add a drawer listener to animate the drawer
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                final float diffScaleOffset = slideOffset * (1 - END_SCALE);
-                final float offsetScale = 1 - diffScaleOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+                final float diffScaleOffset = slideOffset * (1 - END_SCALE); // Calculate scaling
+                final float offsetScale = 1 - diffScaleOffset; // Calculate offset scale
+                contentView.setScaleX(offsetScale); // Set scale for the content view
+                contentView.setScaleY(offsetScale); // Set scale for the content view
 
-                final float xOffset = drawerView.getWidth() * slideOffset;
-                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2;
-                final float xTranslation = xOffset - xOffsetDiff;
-                contentView.setTranslationX(xTranslation);
+                final float xOffset = drawerView.getWidth() * slideOffset; // Calculate x offset
+                final float xOffsetDiff = contentView.getWidth() * diffScaleOffset / 2; // Calculate x offset difference
+                final float xTranslation = xOffset - xOffsetDiff; // Calculate translation
+                contentView.setTranslationX(xTranslation); // Set translation for the content view
             }
         });
     }
 
+    // Handle navigation item selections
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if(item.toString().equals("Home")){
-            startActivity(new Intent(Site_Map_Page.this, Home_Page.class));
+        if (item.toString().equals("Home")) {
+            startActivity(new Intent(Site_Map_Page.this, Home_Page.class)); // Navigate to Home Page
         }
-        if(item.toString().equals("Sessions")){
-            startActivity(new Intent(Site_Map_Page.this, Session_Page.class));
+        if (item.toString().equals("Sessions")) {
+            startActivity(new Intent(Site_Map_Page.this, Session_Page.class)); // Navigate to Session Page
         }
-        if(item.toString().equals("QR Check-In")){
-            startActivity(new Intent(Site_Map_Page.this, QR_check_in.class));
+        if (item.toString().equals("QR Check-In")) {
+            startActivity(new Intent(Site_Map_Page.this, QR_check_in.class)); // Navigate to QR Check-In Page
         }
-        if(item.toString().equals("Committee")){
-            startActivity(new Intent(Site_Map_Page.this, Organising_Committee_Page.class));
+        if (item.toString().equals("Committee")) {
+            startActivity(new Intent(Site_Map_Page.this, Organising_Committee_Page.class)); // Navigate to Organising Committee Page
         }
-        if(item.toString().equals("Chat")){
-            startActivity(new Intent(Site_Map_Page.this, Group_Chat_Page.class));
+        if (item.toString().equals("Chat")) {
+            startActivity(new Intent(Site_Map_Page.this, Group_Chat_Page.class)); // Navigate to Group Chat Page
         }
-        if(item.toString().equals("About")){
-            startActivity(new Intent(Site_Map_Page.this, About_Page.class));
+        if (item.toString().equals("About")) {
+            startActivity(new Intent(Site_Map_Page.this, About_Page.class)); // Navigate to About Page
         }
-        if(item.toString().equals("Sign Out")){
+        if (item.toString().equals("Sign Out")) {
+            // Sign out from Google account
             gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Site_Map_Page.this, Google_Sign_In_Page.class));
+                    finish(); // Finish the current activity
+                    startActivity(new Intent(Site_Map_Page.this, Google_Sign_In_Page.class)); // Navigate to Google Sign-In Page
                 }
             });
         }
-        return true;
+        return true; // Return true to indicate the event was handled
     }
 }

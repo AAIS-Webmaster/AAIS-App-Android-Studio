@@ -177,7 +177,7 @@ public class Add_Session_Page extends AppCompatActivity {
                                 paper_name_4, paper_url_4));
 
                         // Send the sessions to the database
-                        dbHelper.sendSession(sessions);
+                        dbHelper.addSession(sessions);
                         startActivity(new Intent(Add_Session_Page.this, Session_Page.class));
 
                     } catch (DateTimeParseException e) {
