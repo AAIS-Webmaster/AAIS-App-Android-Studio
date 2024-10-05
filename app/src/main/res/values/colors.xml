@@ -13,7 +13,7 @@
     <color name="background">#F4F9FF</color>
     <color name="button_color">#FFFFFF</color>
     <color name="card_background">#F9F2E7</color>
-    <color name="highlighted_item_color">#da5e5a</color>
+    <color name="cancel_button_color">#da5e5a</color>
     <color name="transparent">#00000000</color>
     <color name="gray">#888</color>
     <color name="accent">#304067</color>

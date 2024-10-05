@@ -107,21 +107,6 @@
                     android:fontFamily="sans-serif-condensed-medium"
                     android:paddingTop="20dp"/>
 
-        <!--        <androidx.cardview.widget.CardView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="8dp"-->
-        <!--            app:cardElevation="8dp"-->
-        <!--            app:cardCornerRadius="8dp">-->
-
-        <!--            <Spinner-->
-        <!--                android:id="@+id/spinner"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="50dp"-->
-        <!--                android:background="@color/card_background"-->
-        <!--                android:layout_gravity="center_horizontal" />-->
-        <!--        </androidx.cardview.widget.CardView>-->
-
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/error"
                     android:text="Select the location"
-                    android:textColor="@color/highlighted_item_color"
+                    android:textColor="@color/cancel_button_color"
                     android:visibility="gone"
                     android:textSize="18sp"
                     android:gravity="center"/>
@@ -181,7 +166,8 @@
                         android:textColorHint="@color/gray"
                         android:gravity="start"
                         android:textColor="@color/text"
-                        android:id="@+id/add_address"/>
+                        android:id="@+id/add_address"
+                        tools:ignore="Autofill" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -329,22 +315,6 @@
                         android:layout_alignParentEnd="true"
                         android:background="@color/bg"
                         android:layout_gravity="center_horizontal" />
-
-        <!--            <NumberPicker-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="100dp"-->
-        <!--                android:id="@+id/number_picker"-->
-        <!--                android:layout_alignParentEnd="true"-->
-        <!--                android:layout_centerVertical="true"/>-->
-
-        <!--            <ImageButton-->
-        <!--                android:layout_width="50dp"-->
-        <!--                android:layout_height="50dp"-->
-        <!--                android:src="@drawable/baseline_add_24"-->
-        <!--                android:background="@color/background"-->
-        <!--                android:id="@+id/more_papers"-->
-        <!--                android:layout_alignParentEnd="true"-->
-        <!--                android:layout_centerVertical="true"/>-->
                 </RelativeLayout>
 
                 <TextView
@@ -586,7 +556,7 @@
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:fontFamily="sans-serif-black"
-                    android:backgroundTint="@color/highlighted_item_color"
+                    android:backgroundTint="@color/cancel_button_color"
                     android:textColor="@color/bg"
                     android:id="@+id/cancel_action"
                     android:text="CANCEL" />

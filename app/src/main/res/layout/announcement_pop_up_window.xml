@@ -122,7 +122,7 @@
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:fontFamily="sans-serif-black"
-                    android:backgroundTint="@color/highlighted_item_color"
+                    android:backgroundTint="@color/cancel_button_color"
                     android:textColor="@color/bg"
                     android:id="@+id/cancel_action"
                     android:text="Cancel" />
@@ -134,7 +134,7 @@
                     android:id="@+id/error"
                     android:textAlignment="center"
                     android:fontFamily="sans-serif-condensed"
-                    android:textColor="@color/highlighted_item_color"
+                    android:textColor="@color/cancel_button_color"
                     android:visibility="gone"
                     android:textSize="18sp"/>
             </LinearLayout>

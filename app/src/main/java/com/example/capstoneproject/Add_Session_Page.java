@@ -254,7 +254,7 @@ public class Add_Session_Page extends AppCompatActivity {
         }
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.spinner_items, R.layout.spinner_design);
+                R.array.number_of_papers_spinner, R.layout.spinner_design);
         adapter.setDropDownViewResource(R.layout.spinner_design);
         spinner.setAdapter(adapter);
 
