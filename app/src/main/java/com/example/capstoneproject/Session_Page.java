@@ -4,6 +4,7 @@ import static com.example.capstoneproject.CalendarUtils.daysInWeekArray;
 import static com.example.capstoneproject.CalendarUtils.monthYearFromDate;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,7 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
     static final float END_SCALE = 0.7f; // Scale factor for the drawer animation
     GoogleSignInOptions gso; // Google Sign-In options
     GoogleSignInClient gsc; // Google Sign-In client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     String personName, personEmail; // Variables to hold user's name and email
     DrawerLayout drawerLayout; // Drawer layout for navigation
     NavigationView navigationView; // Navigation view for the drawer
@@ -85,19 +87,34 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         monthYearText = findViewById(R.id.monthYearTV);
 
-        // Set up Google Sign-In options and client
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
-
         // Get the last signed-in account
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName(); // Get user's name
-            personEmail = acct.getEmail(); // Get user's email
+        userProfile = UserProfile.getInstance();
+
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Get user's name
+            personEmail = userProfile.getEmail(); // Get user's email
 
             // Show the AddSession button only for a specific email
-            if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                AddSession.setVisibility(View.VISIBLE);
+            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
+                AddSession.setVisibility(View.VISIBLE); // Show add session button for admin
+            }
+        }
+
+        else {
+            // Set up Google Sign-In options and client
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso);
+
+            // Get the last signed-in account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Get user's name
+                personEmail = acct.getEmail(); // Get user's email
+
+                // Show the AddSession button only for a specific email
+                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
+                    AddSession.setVisibility(View.VISIBLE); // Show add session button for admin
+                }
             }
         }
 
@@ -228,13 +245,32 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(Session_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Session_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Session_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Session_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;
     }

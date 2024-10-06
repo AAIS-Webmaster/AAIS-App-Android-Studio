@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/accent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".Sign_In_Page">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="150dp"
+        app:cardElevation="10dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:background="@color/card_background"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo"
+            app:shapeAppearanceOverlay="@style/CircleImageView" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="20dp"
+        android:text="Sign In Options"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:fontFamily="sans-serif-black"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/google_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/google_logo" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/google_id"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="Sign in with Google"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:backgroundTint="@color/bg"
+            android:textColor="@color/text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/linkedin_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/linkedin_logo" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/linkedIn_id"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="Sign in with LinkedIn"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:backgroundTint="@color/bg"
+            android:textColor="@color/text" />
+    </LinearLayout>
+</LinearLayout>

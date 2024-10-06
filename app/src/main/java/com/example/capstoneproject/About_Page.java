@@ -1,6 +1,7 @@
 package com.example.capstoneproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,9 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
 
+    // LinkedIn sign-in user profile
+    UserProfile userProfile;
+
     // UI components
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -70,15 +74,25 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
         para = findViewById(R.id.para);
         unseen = findViewById(R.id.unseen);
 
-        // Setup Google Sign-In options to request user's email
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
+        // Get the last signed-in LinkedIn account
+        userProfile = UserProfile.getInstance();
 
-        // Get the last signed-in Google account, if available
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName();  // Get the user's name
-            personEmail = acct.getEmail();       // Get the user's email
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName();   // Get the user's name
+            personEmail = userProfile.getEmail(); // Get the user's email
+        }
+
+        else {
+            // Setup Google Sign-In options to request user's email
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso);
+
+            // Get the last signed-in Google account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName();  // Get the user's name
+                personEmail = acct.getEmail();       // Get the user's email
+            }
         }
 
         // Check if the user has seen the latest announcement
@@ -218,14 +232,32 @@ public class About_Page extends AppCompatActivity implements NavigationView.OnNa
             startActivity(new Intent(About_Page.this, Group_Chat_Page.class));
         }
         if (item.toString().equals("Sign Out")) {
-            // Sign out the user and navigate to the Google Sign-In page
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(About_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(About_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(About_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;  // Indicate that the item selection has been handled
     }

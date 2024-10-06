@@ -47,6 +47,8 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         // Show or hide the delete button based on whether the user is an admin
         if (currentUserEmail.equals("guptasdhuruv4@gmail.com")) {
             holder.deleteImageView.setVisibility(View.VISIBLE); // Show delete button for admin
+        } if (currentUserEmail.equals("u3238031@uni.canberra.edu.au")) {
+            holder.deleteImageView.setVisibility(View.VISIBLE); // Show delete button for admin
         } else {
             holder.deleteImageView.setVisibility(View.GONE); // Hide delete button for non-admins
         }

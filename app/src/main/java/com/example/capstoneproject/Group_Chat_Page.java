@@ -1,6 +1,7 @@
 package com.example.capstoneproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
     private ChatPageAdapter adapter; // Adapter for the RecyclerView
     private GoogleSignInOptions gso; // Google Sign-In options
     private GoogleSignInClient gsc; // Google Sign-In client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     private String personName, personEmail; // Variables to store user details
     DrawerLayout drawerLayout; // Layout for the navigation drawer
     NavigationView navigationView; // Navigation view for menu items
@@ -82,17 +84,27 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
         menuIcon = findViewById(R.id.menu_icon);
         notification = findViewById(R.id.notification);
 
-        // Configure Google Sign-In options to request the user's email
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail() // Request email address
-                .build(); // Build the options
-        gsc = GoogleSignIn.getClient(this, gso); // Get the GoogleSignInClient with the specified options
-
         // Get the last signed-in account
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName(); // Retrieve the display name
-            personEmail = acct.getEmail(); // Retrieve the email address
+        userProfile = UserProfile.getInstance();
+
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName();  // Retrieve the display name
+            personEmail = userProfile.getEmail(); // Retrieve the email address
+        }
+
+        else {
+            // Configure Google Sign-In options to request the user's email
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail() // Request email address
+                    .build(); // Build the options
+            gsc = GoogleSignIn.getClient(this, gso); // Get the GoogleSignInClient with the specified options
+
+            // Get the last signed-in account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Retrieve the display name
+                personEmail = acct.getEmail(); // Retrieve the email address
+            }
         }
 
         // Set up the RecyclerView for displaying chat messages
@@ -291,13 +303,32 @@ public class Group_Chat_Page extends AppCompatActivity implements NavigationView
             startActivity(new Intent(Group_Chat_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Group_Chat_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Group_Chat_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Group_Chat_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;
     }

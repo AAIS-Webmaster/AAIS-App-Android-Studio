@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -91,6 +92,9 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
     GoogleSignInOptions gso; // Google Sign-In options configuration
     GoogleSignInClient gsc; // Client for Google Sign-In
 
+    // LinkedIn Sign-In Data
+    UserProfile userProfile; // LinkedIn sign-in user profile
+
     // TextViews for displaying session details
     TextView session_name, track, date, time, location, address, chair, paper1, paper2, paper3, paper4; // Text views for various session attributes
 
@@ -130,12 +134,12 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             }
         };
 
-// Hide the action bar if it is present
+        // Hide the action bar if it is present
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-// Initialize UI elements by finding them by their IDs
+        // Initialize UI elements by finding them by their IDs
         session_name = findViewById(R.id.session_name); // TextView for session name
         track = findViewById(R.id.track); // TextView for the track of the session
         date = findViewById(R.id.date); // TextView for the session date
@@ -156,31 +160,47 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         notification = findViewById(R.id.notification); // ImageView for notifications
         unseen = findViewById(R.id.unseen); // Button for unseen announcements
 
-// Initialize ImageButtons for downloading papers
+        // Initialize ImageButtons for downloading papers
         paper1_download = findViewById(R.id.paper1_download); // ImageButton for downloading the first paper
         paper2_download = findViewById(R.id.paper2_download); // ImageButton for downloading the second paper
         paper3_download = findViewById(R.id.paper3_download); // ImageButton for downloading the third paper
         paper4_download = findViewById(R.id.paper4_download); // ImageButton for downloading the fourth paper
 
-// Initialize layouts for displaying additional content for papers
+        // Initialize layouts for displaying additional content for papers
         layout2 = findViewById(R.id.layout2); // Layout for the second paper
         layout3 = findViewById(R.id.layout3); // Layout for the third paper
         layout4 = findViewById(R.id.layout4); // Layout for the fourth paper
 
-// Set up Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso); // Get GoogleSignInClient
+        // Get the last signed-in account
+        userProfile = UserProfile.getInstance();
 
-// Get the last signed-in account
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
             // Retrieve the display name and email of the signed-in user
-            personName = acct.getDisplayName();
-            personEmail = acct.getEmail();
+            personName = userProfile.getName();
+            personEmail = userProfile.getEmail();
 
             // If the user's email matches a specific address, show the delete button
-            if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                delete.setVisibility(View.VISIBLE);
+            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
+                delete.setVisibility(View.VISIBLE); // Show delete session button for admin
+            }
+        }
+
+        else {
+            // Set up Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso); // Get GoogleSignInClient
+
+            // Get the last signed-in account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                // Retrieve the display name and email of the signed-in user
+                personName = acct.getDisplayName();
+                personEmail = acct.getEmail();
+
+                // If the user's email matches a specific address, show the delete button
+                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
+                    delete.setVisibility(View.VISIBLE); // Show delete session button for admin
+                }
             }
         }
 
@@ -756,13 +776,32 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
             startActivity(new Intent(Session_Details_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Session_Details_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Session_Details_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Session_Details_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;
     }

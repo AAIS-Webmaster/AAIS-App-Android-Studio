@@ -52,7 +52,7 @@
             android:name=".Home_Page"
             android:exported="false" />
         <activity
-            android:name=".Google_Sign_In_Page"
+            android:name=".Sign_In_Page"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

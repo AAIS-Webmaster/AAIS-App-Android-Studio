@@ -2,6 +2,7 @@ package com.example.capstoneproject;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
     static final float END_SCALE = 0.7f; // Scale factor for navigation drawer
     GoogleSignInOptions gso; // Google Sign-In options
     GoogleSignInClient gsc; // Google Sign-In client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     String personName, personEmail; // User's name and email
     DrawerLayout drawerLayout; // Navigation drawer layout
     NavigationView navigationView; // Navigation view for drawer items
@@ -66,20 +68,37 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         contentView = findViewById(R.id.content);
         addAnnouncement = findViewById(R.id.add_announcement);
 
-        // Configure Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso); // Get Google Sign-In client
+        // Get the last signed-in LinkedIn account
+        userProfile = UserProfile.getInstance();
 
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this); // Get last signed-in account
-        if(acct != null) {
-            personName = acct.getDisplayName(); // Get user's display name
-            personEmail = acct.getEmail(); // Get user's email
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Get user's display name
+            personEmail = userProfile.getEmail(); // Get user's email
 
-            // Check if the signed-in user is an admin
-            assert personEmail != null;
-            if(personEmail.equals("guptasdhuruv4@gmail.com")){
+            // Show admin sign-in message if the user is an admin
+            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
                 Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show(); // Notify admin sign-in
                 addAnnouncement.setVisibility(View.VISIBLE); // Show add announcement button for admin
+            }
+        }
+
+        else {
+            // Configure Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso); // Get Google Sign-In client
+
+            // Get the last signed-in Google account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this); // Get last signed-in account
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Get user's display name
+                personEmail = acct.getEmail(); // Get user's email
+
+                // Check if the signed-in user is an admin
+                assert personEmail != null;
+                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
+                    Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show(); // Notify admin sign-in
+                    addAnnouncement.setVisibility(View.VISIBLE); // Show add announcement button for admin
+                }
             }
         }
 
@@ -232,13 +251,32 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
             startActivity(new Intent(Announcement_Page.this, About_Page.class)); // Go to About page
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish(); // Finish current activity
-                    startActivity(new Intent(Announcement_Page.this, Google_Sign_In_Page.class)); // Start Google Sign-In page
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Announcement_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Announcement_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true; // Indicate item selection handled
     }

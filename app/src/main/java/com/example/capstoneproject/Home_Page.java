@@ -1,6 +1,7 @@
 package com.example.capstoneproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
     static final float END_SCALE = 0.7f; // Constant for drawer animation scaling
     GoogleSignInOptions gso; // Google sign-in options
     GoogleSignInClient gsc; // Google sign-in client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     String personName, personEmail; // User's name and email
     DrawerLayout drawerLayout; // Navigation drawer layout
     CardView track, check_in, site_map; // Card views for different functionalities
@@ -85,35 +87,65 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         check_in = findViewById(R.id.qr_code_check_in);
         site_map = findViewById(R.id.site_map);
 
-        // Configure Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso); // Initialize GoogleSignInClient
-
         // Get the last signed-in account
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) { // Check if an account is available
-            personName = acct.getDisplayName(); // Get user display name
-            personEmail = acct.getEmail(); // Get user email
-            String profileImageUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : ""; // Get profile image URL
+        userProfile = UserProfile.getInstance();
 
-            // Load the user's profile image using Picasso
-            if (!profileImageUrl.isEmpty()) {
-                Picasso.get().load(profileImageUrl).into(userIcon);
-                dbHelper.saveUserDataWithImageUrl(personEmail, personName, profileImageUrl); // Save user data to the database
-            } else {
-                // Set the initial of the user's name if no image is available
-                user_icon_text.setText(personName.substring(0, 1).toUpperCase());
-                user_icon_text.setVisibility(View.VISIBLE); // Show initial
-                userIcon.setVisibility(View.GONE); // Hide profile image
-            }
-
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Get user display name
+            personEmail = userProfile.getEmail();  // Get user email
             // Set welcome message for the user
             user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
                     personName.toString().split(" ")[0].substring(1).toLowerCase() + " !");
 
             // Show admin sign-in message if the user is an admin
-            if (personEmail.equals("guptasdhuruv4@gmail.com")) {
+            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
                 Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
+            }
+
+            // Check if the account has a profile image URL
+            if (userProfile.getPicture() != null){
+                Picasso.get().load(userProfile.getPicture()).into(userIcon);
+                dbHelper.saveUserDataWithImageUrl(personEmail, personName, userProfile.getPicture()); // Save user data to the database
+            }
+            else {
+                user_icon_text.setText(personName.substring(0, 1).toUpperCase());
+                user_icon_text.setVisibility(View.VISIBLE); // Show initial
+                userIcon.setVisibility(View.GONE); // Hide profile image
+            }
+        }
+
+        else {
+            // Configure Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso); // Initialize GoogleSignInClient
+
+            // Get the last signed-in account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+
+            if (acct != null) { // Check if an account is available
+                personName = acct.getDisplayName(); // Get user display name
+                personEmail = acct.getEmail(); // Get user email
+                String profileImageUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : ""; // Get profile image URL
+
+                // Load the user's profile image using Picasso
+                if (!profileImageUrl.isEmpty()) {
+                    Picasso.get().load(profileImageUrl).into(userIcon);
+                    dbHelper.saveUserDataWithImageUrl(personEmail, personName, profileImageUrl); // Save user data to the database
+                } else {
+                    // Set the initial of the user's name if no image is available
+                    user_icon_text.setText(personName.substring(0, 1).toUpperCase());
+                    user_icon_text.setVisibility(View.VISIBLE); // Show initial
+                    userIcon.setVisibility(View.GONE); // Hide profile image
+                }
+
+                // Set welcome message for the user
+                user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
+                        personName.toString().split(" ")[0].substring(1).toLowerCase() + " !");
+
+                // Show admin sign-in message if the user is an admin
+                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
+                    Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
@@ -369,13 +401,32 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
             startActivity(new Intent(Home_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Home_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Home_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Home_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true; // Indicate that the item selection has been handled
     }

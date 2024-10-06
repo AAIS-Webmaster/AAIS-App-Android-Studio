@@ -3,6 +3,7 @@ package com.example.capstoneproject;
 import static com.example.capstoneproject.Home_Page.END_SCALE;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,6 +54,7 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
     LinearLayout contentView; // Content view of the layout
     GoogleSignInOptions gso; // Google Sign-In options
     GoogleSignInClient gsc; // Google Sign-In client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     private MyDatabaseHelper dbHelper; // Database helper for managing announcements
 
     @Override
@@ -66,15 +68,25 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
             getSupportActionBar().hide();
         }
 
-        // Configure Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
-
         // Get the signed-in account details
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName(); // Retrieve display name
-            personEmail = acct.getEmail(); // Retrieve email
+        userProfile = UserProfile.getInstance();
+
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Retrieve display name
+            personEmail = userProfile.getEmail(); // Retrieve email
+        }
+
+        else {
+            // Configure Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso);
+
+            // Get the signed-in account details
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Retrieve display name
+                personEmail = acct.getEmail(); // Retrieve email
+            }
         }
 
         // Initialize UI components
@@ -316,13 +328,32 @@ public class Organising_Committee_Page extends AppCompatActivity implements Navi
             startActivity(new Intent(Organising_Committee_Page.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(Organising_Committee_Page.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Organising_Committee_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Organising_Committee_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;
     }

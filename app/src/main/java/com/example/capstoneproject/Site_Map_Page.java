@@ -1,6 +1,7 @@
 package com.example.capstoneproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
     String personName, personEmail; // Variables to store user's name and email
     GoogleSignInOptions gso; // Google sign-in options
     GoogleSignInClient gsc; // Google sign-in client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     DrawerLayout drawerLayout; // Layout for the navigation drawer
     NavigationView navigationView; // Navigation view for the drawer
     LinearLayout contentView; // Main content view
@@ -60,15 +62,25 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
         map = findViewById(R.id.site_map);
         unseen = findViewById(R.id.unseen);
 
-        // Configure Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso); // Get the Google Sign-In client
-
         // Get the currently signed-in account
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName(); // Store user's display name
-            personEmail = acct.getEmail(); // Store user's email
+        userProfile = UserProfile.getInstance();
+
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Store user's display name
+            personEmail = userProfile.getEmail(); // Store user's email
+        }
+
+        else {
+            // Configure Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso); // Get the Google Sign-In client
+
+            // Get the currently signed-in account
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Store user's display name
+                personEmail = acct.getEmail(); // Store user's email
+            }
         }
 
         // Check for seen announcements in the database
@@ -207,14 +219,32 @@ public class Site_Map_Page extends AppCompatActivity implements NavigationView.O
             startActivity(new Intent(Site_Map_Page.this, About_Page.class)); // Navigate to About Page
         }
         if (item.toString().equals("Sign Out")) {
-            // Sign out from Google account
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish(); // Finish the current activity
-                    startActivity(new Intent(Site_Map_Page.this, Google_Sign_In_Page.class)); // Navigate to Google Sign-In Page
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(Site_Map_Page.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(Site_Map_Page.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true; // Return true to indicate the event was handled
     }

@@ -2,6 +2,7 @@ package com.example.capstoneproject;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
     ImageView menuIcon, notification; // Menu and notification icons
     GoogleSignInOptions gso; // Google Sign-In options
     GoogleSignInClient gsc; // Google Sign-In client
+    UserProfile userProfile; // LinkedIn sign-in user profile
     Button open, unseen; // Buttons for opening URL and displaying unseen announcements
     private MyDatabaseHelper dbHelper; // Database helper for Firebase interactions
 
@@ -77,15 +79,25 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
         open = findViewById(R.id.open_url);
         unseen = findViewById(R.id.unseen);
 
-        // Configure Google Sign-In options
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
-
         // Get the last signed-in user's account information
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            personName = acct.getDisplayName(); // Get user's display name
-            personEmail = acct.getEmail(); // Get user's email
+        userProfile = UserProfile.getInstance();
+
+        if (userProfile.getName() != null && userProfile.getEmail() != null){
+            personName = userProfile.getName(); // Get user's display name
+            personEmail = userProfile.getEmail(); // Get user's email
+        }
+
+        else {
+            // Configure Google Sign-In options
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            gsc = GoogleSignIn.getClient(this, gso);
+
+            // Get the last signed-in user's account information
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                personName = acct.getDisplayName(); // Get user's display name
+                personEmail = acct.getEmail(); // Get user's email
+            }
         }
 
         // Retrieve seen announcement status from the database
@@ -276,13 +288,32 @@ public class QR_check_in extends AppCompatActivity implements NavigationView.OnN
             startActivity(new Intent(QR_check_in.this, About_Page.class));
         }
         if(item.toString().equals("Sign Out")){
-            gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    finish();
-                    startActivity(new Intent(QR_check_in.this, Google_Sign_In_Page.class));
-                }
-            });
+            try {
+                // Clear stored access token
+                SharedPreferences sharedPreferences = getSharedPreferences("YourAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(userProfile.getToken());
+                editor.apply();
+
+                // Clear any other user data
+                UserProfile.getInstance().clearUserProfile(); // Implement this method to clear user profile data
+
+                // Redirect user to the login screen or homepage
+                Intent intent = new Intent(QR_check_in.this, Sign_In_Page.class); // Change to your login activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception ignored){}
+
+            try {
+                gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(QR_check_in.this, Sign_In_Page.class));
+                    }
+                });
+            } catch (Exception ignored){}
         }
         return true;
     }
