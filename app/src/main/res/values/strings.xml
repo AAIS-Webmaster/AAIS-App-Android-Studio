@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Capstone Project</string>
 
+    <string-array name="admin_email_list">
+        <item>guptasdhuruv4@gmail.com</item>
+        <item>u3238031@uni.canberra.edu.au</item>
+        <item>admin3@example.com</item>
+        <item>admin4@example.com</item>
+    </string-array>
+
     <string-array name="number_of_papers_spinner">
         <item>1</item>
         <item>2</item>

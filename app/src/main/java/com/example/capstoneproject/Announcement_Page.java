@@ -29,6 +29,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Activity for displaying announcements and managing user interactions
@@ -71,15 +72,13 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
         // Get the last signed-in LinkedIn account
         userProfile = UserProfile.getInstance();
 
+        // Retrieve the admin emails from values/strings.xml
+        String[] adminEmailsArray = getResources().getStringArray(R.array.admin_email_list);
+        List<String> adminEmailsList = Arrays.asList(adminEmailsArray);
+
         if (userProfile.getName() != null && userProfile.getEmail() != null){
             personName = userProfile.getName(); // Get user's display name
             personEmail = userProfile.getEmail(); // Get user's email
-
-            // Show admin sign-in message if the user is an admin
-            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
-                Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show(); // Notify admin sign-in
-                addAnnouncement.setVisibility(View.VISIBLE); // Show add announcement button for admin
-            }
         }
 
         else {
@@ -92,14 +91,16 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
             if (acct != null) {
                 personName = acct.getDisplayName(); // Get user's display name
                 personEmail = acct.getEmail(); // Get user's email
-
-                // Check if the signed-in user is an admin
-                assert personEmail != null;
-                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                    Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show(); // Notify admin sign-in
-                    addAnnouncement.setVisibility(View.VISIBLE); // Show add announcement button for admin
-                }
             }
+        }
+
+        // Check if the signed-in user is an admin
+        assert personEmail != null;
+
+        // Show admin sign-in message if the user is an admin
+        if (adminEmailsList.contains(personEmail)) {
+            Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show(); // Notify admin sign-in
+            addAnnouncement.setVisibility(View.VISIBLE); // Show add announcement button for admin
         }
 
         dbHelper.sendSeenAnnouncement(personEmail, true); // Mark announcement as seen
@@ -158,7 +159,11 @@ public class Announcement_Page extends AppCompatActivity implements NavigationVi
 
                         // Notify adapter of data changes
                         if (adapter == null) {
-                            adapter = new AnnouncementAdapter(announcementLocations, personEmail); // Create new adapter
+                            // Retrieve the admin emails from values/strings.xml
+                            String[] adminEmailsArray = getResources().getStringArray(R.array.admin_email_list);
+                            List<String> adminEmailsList = Arrays.asList(adminEmailsArray);
+
+                            adapter = new AnnouncementAdapter(announcementLocations, personEmail, adminEmailsList); // Create new adapter
                             announcementRecycler.setAdapter(adapter); // Set adapter to RecyclerView
                         } else {
                             adapter.notifyDataSetChanged(); // Notify existing adapter of data change

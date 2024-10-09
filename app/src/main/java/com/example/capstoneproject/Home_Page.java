@@ -35,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -90,17 +91,16 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
         // Get the last signed-in account
         userProfile = UserProfile.getInstance();
 
+        // Retrieve the admin emails from values/strings.xml
+        String[] adminEmailsArray = getResources().getStringArray(R.array.admin_email_list);
+        List<String> adminEmailsList = Arrays.asList(adminEmailsArray);
+
         if (userProfile.getName() != null && userProfile.getEmail() != null){
             personName = userProfile.getName(); // Get user display name
             personEmail = userProfile.getEmail();  // Get user email
             // Set welcome message for the user
             user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
                     personName.toString().split(" ")[0].substring(1).toLowerCase() + " !");
-
-            // Show admin sign-in message if the user is an admin
-            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
-                Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
-            }
 
             // Check if the account has a profile image URL
             if (userProfile.getPicture() != null){
@@ -141,12 +141,12 @@ public class Home_Page extends AppCompatActivity implements NavigationView.OnNav
                 // Set welcome message for the user
                 user.setText("Hello, " + personName.toString().split(" ")[0].substring(0, 1).toUpperCase() +
                         personName.toString().split(" ")[0].substring(1).toLowerCase() + " !");
-
-                // Show admin sign-in message if the user is an admin
-                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                    Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
-                }
             }
+        }
+
+        // Show admin sign-in message if the user is an admin
+        if (adminEmailsList.contains(personEmail)) {
+            Toast.makeText(this, "Admin Signed In", Toast.LENGTH_SHORT).show();
         }
 
         // Set click listener for the "track" card view

@@ -38,6 +38,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -90,14 +91,13 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
         // Get the last signed-in account
         userProfile = UserProfile.getInstance();
 
+        // Retrieve the admin emails from values/strings.xml
+        String[] adminEmailsArray = getResources().getStringArray(R.array.admin_email_list);
+        List<String> adminEmailsList = Arrays.asList(adminEmailsArray);
+
         if (userProfile.getName() != null && userProfile.getEmail() != null){
             personName = userProfile.getName(); // Get user's name
             personEmail = userProfile.getEmail(); // Get user's email
-
-            // Show the AddSession button only for a specific email
-            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
-                AddSession.setVisibility(View.VISIBLE); // Show add session button for admin
-            }
         }
 
         else {
@@ -110,12 +110,12 @@ public class Session_Page extends AppCompatActivity implements NavigationView.On
             if (acct != null) {
                 personName = acct.getDisplayName(); // Get user's name
                 personEmail = acct.getEmail(); // Get user's email
-
-                // Show the AddSession button only for a specific email
-                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                    AddSession.setVisibility(View.VISIBLE); // Show add session button for admin
-                }
             }
+        }
+
+        // Show the AddSession button only for a specific email
+        if (adminEmailsList.contains(personEmail)) {
+            AddSession.setVisibility(View.VISIBLE); // Show add session button for admin
         }
 
         // Check if the user has seen announcements

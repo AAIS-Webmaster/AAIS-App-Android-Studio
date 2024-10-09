@@ -49,6 +49,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -174,15 +175,14 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
         // Get the last signed-in account
         userProfile = UserProfile.getInstance();
 
+        // Retrieve the admin emails from values/strings.xml
+        String[] adminEmailsArray = getResources().getStringArray(R.array.admin_email_list);
+        List<String> adminEmailsList = Arrays.asList(adminEmailsArray);
+
         if (userProfile.getName() != null && userProfile.getEmail() != null){
             // Retrieve the display name and email of the signed-in user
             personName = userProfile.getName();
             personEmail = userProfile.getEmail();
-
-            // If the user's email matches a specific address, show the delete button
-            if (personEmail.equals("u3238031@uni.canberra.edu.au")) {
-                delete.setVisibility(View.VISIBLE); // Show delete session button for admin
-            }
         }
 
         else {
@@ -196,12 +196,12 @@ public class Session_Details_Page extends AppCompatActivity implements Navigatio
                 // Retrieve the display name and email of the signed-in user
                 personName = acct.getDisplayName();
                 personEmail = acct.getEmail();
-
-                // If the user's email matches a specific address, show the delete button
-                if (personEmail.equals("guptasdhuruv4@gmail.com")) {
-                    delete.setVisibility(View.VISIBLE); // Show delete session button for admin
-                }
             }
+        }
+
+        // If the user's email matches a specific address, show the delete button
+        if (adminEmailsList.contains(personEmail)) {
+            delete.setVisibility(View.VISIBLE); // Show delete session button for admin
         }
 
         // Retrieve seen announcement status from the database

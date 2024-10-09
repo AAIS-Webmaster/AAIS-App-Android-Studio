@@ -86,16 +86,19 @@ public class Add_Announcement_Page extends AppCompatActivity {
                 // Input validation: Show appropriate error messages if fields are empty
                 else if (title.getText().toString().equals("") && description.getText().toString().equals("")) {
                     error.setText("Input Required: The Subject and Description Tags are empty.");
+                    // Make the error message visible
+                    error.setVisibility(View.VISIBLE);
                 }
                 else if (!title.getText().toString().equals("") && description.getText().toString().equals("")) {
                     error.setText("Input Required: The Description Tag is empty.");
+                    // Make the error message visible
+                    error.setVisibility(View.VISIBLE);
                 }
                 else if (title.getText().toString().equals("") && !description.getText().toString().equals("")) {
                     error.setText("Input Required: The Subject Tag is empty.");
+                    // Make the error message visible
+                    error.setVisibility(View.VISIBLE);
                 }
-
-                // Make the error message visible
-                error.setVisibility(View.VISIBLE);
             }
         });
 

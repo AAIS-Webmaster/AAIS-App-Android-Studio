@@ -19,11 +19,13 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
 
     private final List<AnnouncementHelperClass> announcements; // List of announcement data
     private final String currentUserEmail; // Store the current user's email to check permissions
+    private final List<String> adminEmailsList; // List of admin emails
 
     // Constructor for initializing adapter with announcements and user email
-    public AnnouncementAdapter(List<AnnouncementHelperClass> announcements, String currentUserEmail) {
+    public AnnouncementAdapter(List<AnnouncementHelperClass> announcements, String currentUserEmail, List<String> adminEmailsList) {
         this.announcements = announcements; // Set the list of announcements
         this.currentUserEmail = currentUserEmail; // Set the user's email for role checks
+        this.adminEmailsList = adminEmailsList; // Set the list of admin emails
     }
 
     @NonNull
@@ -45,9 +47,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.dateTimeTextView.setText(announcement.getDateTime());
 
         // Show or hide the delete button based on whether the user is an admin
-        if (currentUserEmail.equals("guptasdhuruv4@gmail.com")) {
-            holder.deleteImageView.setVisibility(View.VISIBLE); // Show delete button for admin
-        } if (currentUserEmail.equals("u3238031@uni.canberra.edu.au")) {
+        if (adminEmailsList.contains(currentUserEmail)) {
             holder.deleteImageView.setVisibility(View.VISIBLE); // Show delete button for admin
         } else {
             holder.deleteImageView.setVisibility(View.GONE); // Hide delete button for non-admins
