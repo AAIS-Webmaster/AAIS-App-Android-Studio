@@ -1,6 +1,6 @@
 package com.example.capstoneproject;
 
-public class LinkedInConstants {
+public class LinkedInConstraints {
 
     // LinkedIn OAuth 2.0 Client ID (Application-specific)
     public static final String CLIENT_ID = "86p07gmy2sewyy";

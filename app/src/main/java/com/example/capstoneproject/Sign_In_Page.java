@@ -72,8 +72,8 @@ public class Sign_In_Page extends AppCompatActivity {
 
         // Configure the LinkedIn Authorization URL
         String state = "linkedin" + System.currentTimeMillis();
-        linkedinAuthURLFull = LinkedInConstants.AUTH_URL + "?response_type=code&client_id=" + LinkedInConstants.CLIENT_ID +
-                "&scope=" + LinkedInConstants.SCOPE + "&state=" + state + "&redirect_uri=" + LinkedInConstants.REDIRECT_URI;
+        linkedinAuthURLFull = LinkedInConstraints.AUTH_URL + "?response_type=code&client_id=" + LinkedInConstraints.CLIENT_ID +
+                "&scope=" + LinkedInConstraints.SCOPE + "&state=" + state + "&redirect_uri=" + LinkedInConstraints.REDIRECT_URI;
 
         // Initialize the LinkedIn Sign-In button
         linkedinLoginButton = findViewById(R.id.linkedIn_id);
@@ -169,7 +169,7 @@ public class Sign_In_Page extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             // Check if the URL is the LinkedIn redirect URI
-            if (request.getUrl().toString().startsWith(LinkedInConstants.REDIRECT_URI)) {
+            if (request.getUrl().toString().startsWith(LinkedInConstraints.REDIRECT_URI)) {
                 // Handle the OAuth callback URL
                 handleUrl(request.getUrl().toString());
 
@@ -185,7 +185,7 @@ public class Sign_In_Page extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Check if the URL is the LinkedIn redirect URI (for backward compatibility)
-            if (url.startsWith(LinkedInConstants.REDIRECT_URI)) {
+            if (url.startsWith(LinkedInConstraints.REDIRECT_URI)) {
                 handleUrl(url);
                 if (url.contains("?code=")) {
                     linkedInDialog.dismiss(); // Dismiss dialog on successful authorization
@@ -220,9 +220,9 @@ public class Sign_In_Page extends AppCompatActivity {
             String grantType = "authorization_code";
             // Create the POST parameters required for the access token request
             String postParams = "grant_type=" + grantType + "&code=" + linkedinCode +
-                    "&redirect_uri=" + LinkedInConstants.REDIRECT_URI +
-                    "&client_id=" + LinkedInConstants.CLIENT_ID +
-                    "&client_secret=" + LinkedInConstants.CLIENT_SECRET;
+                    "&redirect_uri=" + LinkedInConstraints.REDIRECT_URI +
+                    "&client_id=" + LinkedInConstraints.CLIENT_ID +
+                    "&client_secret=" + LinkedInConstraints.CLIENT_SECRET;
 
             OkHttpClient client = new OkHttpClient();
 
@@ -231,7 +231,7 @@ public class Sign_In_Page extends AppCompatActivity {
 
             // Build the token request
             Request request = new Request.Builder()
-                    .url(LinkedInConstants.TOKEN_URL)
+                    .url(LinkedInConstraints.TOKEN_URL)
                     .post(body)
                     .build();
 
