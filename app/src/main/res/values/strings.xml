@@ -2,10 +2,8 @@
     <string name="app_name">Capstone Project</string>
 
     <string-array name="admin_email_list">
-        <item>guptasdhuruv4@gmail.com</item>
-        <item>u3238031@uni.canberra.edu.au</item>
-        <item>admin3@example.com</item>
-        <item>admin4@example.com</item>
+<!--        <item>studentEmail</item>-->
+        <item>capstone2024uc@gmail.com</item>
     </string-array>
 
     <string-array name="number_of_papers_spinner">
@@ -34,5 +32,4 @@
         <item>The Role of Open Source in the Digital Future (Sponsored)</item>
         <item>Poster SLAM</item>
     </string-array>
-
 </resources>
